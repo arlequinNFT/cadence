@@ -1,0 +1,83 @@
+{
+	"emulators": {
+		"default": {
+			"port": 3569,
+			"serviceAccount": "emulator-account"
+		}
+	},
+	"contracts": {
+		"FlowToken": {
+			"source": "./cadence/contracts/FlowToken.cdc",
+			"aliases": {
+			  "testnet": "0x7e60df042a9c0868",
+			  "mainnet": "0x1654653399040a61",
+			  "emulator" : "0x0ae53cb6e3f42a79"
+			}
+	  	},
+		"FungibleToken": {
+			"source": "./cadence/contracts/FungibleToken.cdc",
+			"aliases": {
+			  "emulator": "0xee82856bf20e2aa6",
+			  "testnet": "0x9a0766d93b6608b7",
+			  "mainnet": "0xf233dcee88fe0abe"
+			}
+		},
+		"NonFungibleToken": {
+			"source": "./cadence/contracts/NonFungibleToken.cdc",
+			"aliases": {
+			  "testnet": "0x631e88ae7f1d7c20",
+			  "mainnet": "0x1d7e57aa55817448"
+			}
+		},
+		"MetadataViews": {
+			"source": "./cadence/contracts/MetadataViews.cdc",
+			"aliases": {
+			  "testnet": "0x631e88ae7f1d7c20",
+			  "mainnet": "0x1d7e57aa55817448"
+			}
+		},
+		"ArleePartner" : "./cadence/contracts/ArleePartner.cdc",
+		"ArleeScene" : "./cadence/contracts/ArleeScene.cdc",
+		"Arlequin" : "./cadence/contracts/Arlequin.cdc"
+	},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"accounts": {
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "a8ae0c2188270b4ccb1e090a64dc99f1f1609101cb90eefe43eb8bfae9bee31c"
+		},
+		"testnet-account" : {
+			"address": "caf92bd514662834",
+			"key": {
+				"type" : "hex",
+				"index" : 0,
+				"signatureAlgorithm" : "ECDSA_secp256k1",
+				"hashAlgorithm" : "SHA3_256",
+				"privateKey" : "1728e48f542bd9d821acd8336a6944292291a668cd287c96ff3efd952864f760",
+				"publicKey" : "8e548b16ba2c25e8ce82c602b3f32b572cdd9c2dd9de6ff67f3fd36f70d9a248fea08291d6f4f82e2e2e48dfec2d43ee8692bf3c5bb26127448d69d7d0bcc2be"
+			}
+		},		
+		"testnet-account-2" : {
+			"address": "3d5fee777ad97010",
+			"key": {
+				"type" : "hex",
+				"index" : 0,
+				"signatureAlgorithm" : "ECDSA_secp256k1",
+				"hashAlgorithm" : "SHA3_256",
+				"privateKey" : "c1c214d1fc827c3718fabed16abeebeaa284c7b32377ebc87a0d8c2440acf32a",
+				"publicKey" : "4c31eca07f5f03414ab172dd644b2bff19c56367f005d44657233fc28d7c1f5dda02981796964cd9e95cc9259300b2862a174ce5af1acff3fdc5c3511c721482"
+			}
+		}
+	},
+	"deployments": {
+		"testnet" : {
+			"testnet-account" : [
+				"ArleePartner", "ArleeScene", "Arlequin"
+			]		
+		}
+	}
+}
