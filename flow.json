@@ -60,28 +60,6 @@
 				"privateKey" : "29afd73eb8d43a16ea06542aa043039becbeca9e2d78c6711f9859233adb35c8",
 				"publicKey" : "0feab6bc5e16ec198dd060513bcf27bd3bba1d8b9c16a4c75876345ea0ed70ca45b3c5ec4869a3b75d2ee132eb5114019256226"
 			}
-		},	
-		"testnet-account-1" : {
-			"address": "caf92bd514662834",
-			"key": {
-				"type" : "hex",
-				"index" : 0,
-				"signatureAlgorithm" : "ECDSA_secp256k1",
-				"hashAlgorithm" : "SHA3_256",
-				"privateKey" : "1728e48f542bd9d821acd8336a6944292291a668cd287c96ff3efd952864f760",
-				"publicKey" : "8e548b16ba2c25e8ce82c602b3f32b572cdd9c2dd9de6ff67f3fd36f70d9a248fea08291d6f4f82e2e2e48dfec2d43ee8692bf3c5bb26127448d69d7d0bcc2be"
-			}
-		},		
-		"testnet-account-2" : {
-			"address": "3d5fee777ad97010",
-			"key": {
-				"type" : "hex",
-				"index" : 0,
-				"signatureAlgorithm" : "ECDSA_secp256k1",
-				"hashAlgorithm" : "SHA3_256",
-				"privateKey" : "c1c214d1fc827c3718fabed16abeebeaa284c7b32377ebc87a0d8c2440acf32a",
-				"publicKey" : "4c31eca07f5f03414ab172dd644b2bff19c56367f005d44657233fc28d7c1f5dda02981796964cd9e95cc9259300b2862a174ce5af1acff3fdc5c3511c721482"
-			}
 		}
 	},
 	"deployments": {

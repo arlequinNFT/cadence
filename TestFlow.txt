@@ -8,11 +8,11 @@ flow project deploy -n=testnet --update
 flow transactions send ./cadence/transactions/setupAccount.cdc -n=testnet --signer=testnet-account
 
 // check if the account is set up 
-flow scripts execute ./cadence/scripts/checkAccountInitialized.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/checkAccountInitialized.cdc 0x4ada5fbd7073699b -n=testnet
 
 /* Setup Partner NFT env */
 // setup Partner NFT Royalty, cut and ratio
-flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.cdc Zeedz 0xcaf92bd514662834 0.05 -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.cdc Zeedz 0x4ada5fbd7073699b 0.05 -n=testnet --signer=testnet-account
 
 // just for trying, already set in contract init
 // set Mint Price
@@ -37,22 +37,22 @@ flow transactions send ./cadence/transactions/mintPartnerNFT.cdc ZeedzNFT Zeedz 
 
 //Script Checks
 // Check a user if he / she has Partner NFT
-flow scripts execute ./cadence/scripts/ArleePartner/checkUserArleePartnerNFT.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/ArleePartner/checkUserArleePartnerNFT.cdc 0x4ada5fbd7073699b -n=testnet
 
 // Get a users Partner NFT IDs 
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTIDs.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTIDs.cdc 0x4ada5fbd7073699b -n=testnet
 
 // Return a reference to Partner NFT by Address and ID 
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFT.cdc 0xcaf92bd514662834 0 -n=testnet
+flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFT.cdc 0x4ada5fbd7073699b 0 -n=testnet
 
 // Get All Arlee Partner NFT reference under an account by Address
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTs.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTs.cdc 0x4ada5fbd7073699b -n=testnet
 
 // Get a Partner NFT name with IDs
 flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerNFTName.cdc 0 -n=testnet
 
 // Get all Partner NFT names a user have 
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTNames.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTNames.cdc 0x4ada5fbd7073699b -n=testnet
 
 // Get the owner addr of an Partner NFT with the ID 
 flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerOwner.cdc 0 -n=testnet
@@ -89,19 +89,19 @@ flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerTotalSupply.c
 
 /* Setup Partner NFT env */
 // Add Whitelist accounts
-flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcct.cdc 0xcaf92bd514662834 2 -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcct.cdc 0x4ada5fbd7073699b 2 -n=testnet --signer=testnet-account
 
 // Batch Add Whitelist accounts
-flow transactions send ./cadence/transactions/ArleeScene/batchAddWhitelistAcct.cdc "{0xcaf92bd514662834:1}" -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/batchAddWhitelistAcct.cdc "{0x4ada5fbd7073699b:1}" -n=testnet --signer=testnet-account
 
 // Add Whitelist minting limit on top (so 3 in total)
-flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcctMint.cdc 0xcaf92bd514662834 1 -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcctMint.cdc 0x4ada5fbd7073699b 1 -n=testnet --signer=testnet-account
 
 // Set Whitelist minting limit (ignore the previous)
-flow transactions send ./cadence/transactions/ArleeScene/setWhitelistAcctMint.cdc 0xcaf92bd514662834 1 -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/setWhitelistAcctMint.cdc 0x4ada5fbd7073699b 1 -n=testnet --signer=testnet-account
 
 // Remove Whitelist
-flow transactions send ./cadence/transactions/ArleeScene/removeWhitelistAcct.cdc 0xcaf92bd514662834 -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/removeWhitelistAcct.cdc 0x4ada5fbd7073699b -n=testnet --signer=testnet-account
 
 // Set Mint Price 
 flow transactions send ./cadence/transactions/ArleeScene/setArleeSceneMintPrice.cdc 20.0 -n=testnet --signer=testnet-account
@@ -138,22 +138,22 @@ flow scripts execute ./cadence/scripts/ArleeScene/getAllArleeSceneCID.cdc -n=tes
 flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneCID.cdc 1 -n=testnet
 
 // Get Arlee Scene NFT IDs owned by Address
-flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTIDs.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTIDs.cdc 0x4ada5fbd7073699b -n=testnet
 
 // Get Arlee Scene NFT owner by ID
 flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneOwner.cdc 1 -n=testnet
 
 // Get Arlee Scene NFT reference by Address and ID
-flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFT.cdc 0xcaf92bd514662834 0 -n=testnet
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFT.cdc 0x4ada5fbd7073699b 0 -n=testnet
 
 // Get All Arlee Scene NFT reference under an account by Address
-flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0x4ada5fbd7073699b -n=testnet
 
 // Get Full Whitelist
 flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneWhitelist.cdc -n=testnet
 
 // Get Whitelisted account minting quota by Address
-flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneWhitelistQuota.cdc 0xcaf92bd514662834 -n=testnet
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneWhitelistQuota.cdc 0x4ada5fbd7073699b -n=testnet
 
 
 

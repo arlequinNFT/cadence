@@ -212,7 +212,7 @@ pub contract Arlequin {
 
         let partnerRoyalty = self.getArleePartnerRoyaltiesByPartner(partner:partner) ?? panic ("Cannot find partner : ".concat(partner))
         let partnerAddr = partnerRoyalty.wallet
-        let partnerVaultCap = getAccount(buyer).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+        let partnerVaultCap = getAccount(partnerAddr).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver)
         let partnerVault = partnerVaultCap.borrow() ?? panic("Cannot borrow partner's receiving vault reference")
 
         let recipientCap = getAccount(buyer).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
