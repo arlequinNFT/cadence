@@ -112,6 +112,7 @@
         pub fun deposit(token: @NonFungibleToken.NFT)
         pub fun batchDeposit(collection: @NonFungibleToken.Collection)
         pub fun borrowNFT(id : UInt64) : &NonFungibleToken.NFT
+        pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver}
         pub fun borrowArleeScene(id : UInt64) : &ArleeScene.NFT? {
             // If the result isn't nil, the id of the returned reference
             // should be the same as the argument to the function
@@ -120,9 +121,6 @@
                     "Cannot borrow Component reference: The ID of the returned reference is incorrect"
             }
         }
-
-        /* MetadataViews Implementation */
-        pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver}
     }
 
 
@@ -228,7 +226,7 @@
     /* Query Function (Can also be done in Arlee Contract) */
     // return true if the address holds the Partner NFT
     pub fun getArleeSceneIDs(addr: Address): [UInt64]? {
-        let holderCap = getAccount(addr).getCapability<&{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
+        let holderCap = getAccount(addr).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         
         if holderCap.borrow == nil {
             return nil
@@ -274,7 +272,7 @@
         ArleeScene.marketplaceCut = cut
     }
 
-    access(account) fun mintSceneNFT(recipient:&{ArleeScene.CollectionPublic}, cid:String, description:String) {
+    access(account) fun mintSceneNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, description:String) {
         pre{
             ArleeScene.mintable : "Public minting is not available at the moment."
         }
@@ -290,7 +288,7 @@
         recipient.deposit(token: <- newNFT) 
     }
 
-    access(account) fun mintSceneWhitelistNFT(recipient:&{ArleeScene.CollectionPublic}, cid:String, description:String){
+    access(account) fun mintSceneWhitelistNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, description:String){
         pre{
             ArleeScene.whitelistMintable : "Whitelist minting is not available at the moment."
         }
@@ -375,7 +373,7 @@
 
         // Setup Account
         self.account.save(<- ArleeScene.createEmptyCollection() , to: ArleeScene.CollectionStoragePath)
-        self.account.link<&{ArleeScene.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.Resolver}>(ArleeScene.CollectionPublicPath, target:ArleeScene.CollectionStoragePath)
+        self.account.link<&ArleeScene.Collection{ArleeScene.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(ArleeScene.CollectionPublicPath, target:ArleeScene.CollectionStoragePath)
     }
         
  }

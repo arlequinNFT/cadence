@@ -2,7 +2,7 @@ import Arlequin from "../../contracts/Arlequin.cdc"
 import ArleeScene from "../../contracts/ArleeScene.cdc"
 
 pub fun main(addr: Address) : [&ArleeScene.NFT]? {
-    let collectionCap = getAccount(addr).getCapability<&{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
+    let collectionCap = getAccount(addr).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
     if collectionCap.borrow() == nil {return nil}
     let collectionRef = collectionCap.borrow()!
 

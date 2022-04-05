@@ -208,14 +208,14 @@ pub contract Arlequin {
         }
 
         // get all merchant receiving vault references 
-        let arlequinVault = self.account.borrow<&{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
+        let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
 
         let partnerRoyalty = self.getArleePartnerRoyaltiesByPartner(partner:partner) ?? panic ("Cannot find partner : ".concat(partner))
         let partnerAddr = partnerRoyalty.wallet
-        let partnerVaultCap = getAccount(buyer).getCapability<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+        let partnerVaultCap = getAccount(buyer).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver)
         let partnerVault = partnerVaultCap.borrow() ?? panic("Cannot borrow partner's receiving vault reference")
 
-        let recipientCap = getAccount(buyer).getCapability<&{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
+        let recipientCap = getAccount(buyer).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
         // splitting vaults for partner and arlequin
@@ -236,9 +236,9 @@ pub contract Arlequin {
         }
 
         // get all merchant receiving vault references 
-        let arlequinVault = self.account.borrow<&{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
+        let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
 
-        let recipientCap = getAccount(buyer).getCapability<&{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
+        let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
         // deposit
@@ -255,9 +255,9 @@ pub contract Arlequin {
         }
 
         // get all merchant receiving vault references 
-        let arlequinVault = self.account.borrow<&{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
+        let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
 
-        let recipientCap = getAccount(buyer).getCapability<&{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
+        let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
         // deposit

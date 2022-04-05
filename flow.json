@@ -48,9 +48,20 @@
 	"accounts": {
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
-			"key": "a8ae0c2188270b4ccb1e090a64dc99f1f1609101cb90eefe43eb8bfae9bee31c"
+			"key": "ae1b44c0f5e8f6992ef2348898a35e50a8b0b9684000da8b1dade1b3bcd6ebee"
 		},
 		"testnet-account" : {
+			"address": "4ada5fbd7073699b",
+			"key": {
+				"type" : "hex",
+				"index" : 0,
+				"signatureAlgorithm" : "ECDSA_secp256k1",
+				"hashAlgorithm" : "SHA3_256",
+				"privateKey" : "29afd73eb8d43a16ea06542aa043039becbeca9e2d78c6711f9859233adb35c8",
+				"publicKey" : "0feab6bc5e16ec198dd060513bcf27bd3bba1d8b9c16a4c75876345ea0ed70ca45b3c5ec4869a3b75d2ee132eb5114019256226"
+			}
+		},	
+		"testnet-account-1" : {
 			"address": "caf92bd514662834",
 			"key": {
 				"type" : "hex",
@@ -76,6 +87,13 @@
 	"deployments": {
 		"testnet" : {
 			"testnet-account" : [
+				"ArleePartner", "ArleeScene", "Arlequin"
+			]		
+		},
+		"emulator" : {
+			"emulator-account" : [
+				"NonFungibleToken", 
+				"MetadataViews",
 				"ArleePartner", "ArleeScene", "Arlequin"
 			]		
 		}

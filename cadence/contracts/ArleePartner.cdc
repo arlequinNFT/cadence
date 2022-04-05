@@ -100,18 +100,19 @@
 
     // Collection Interfaces Needed for borrowing NFTs
     pub resource interface CollectionPublic {
-    pub fun getIDs() : [UInt64]
-    pub fun deposit(token: @NonFungibleToken.NFT)
-    pub fun batchDeposit(collection: @NonFungibleToken.Collection)
-    pub fun borrowNFT(id : UInt64) : &NonFungibleToken.NFT
-    pub fun borrowArleePartner(id : UInt64) : &ArleePartner.NFT? {
-        // If the result isn't nil, the id of the returned reference
-        // should be the same as the argument to the function
-        post {
-            (result == nil) || (result?.id == id):
-                "Cannot borrow Component reference: The ID of the returned reference is incorrect"
+        pub fun getIDs() : [UInt64]
+        pub fun deposit(token: @NonFungibleToken.NFT)
+        pub fun batchDeposit(collection: @NonFungibleToken.Collection)
+        pub fun borrowNFT(id : UInt64) : &NonFungibleToken.NFT
+        pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver}
+        pub fun borrowArleePartner(id : UInt64) : &ArleePartner.NFT? {
+            // If the result isn't nil, the id of the returned reference
+            // should be the same as the argument to the function
+            post {
+                (result == nil) || (result?.id == id):
+                    "Cannot borrow Component reference: The ID of the returned reference is incorrect"
+            }
         }
-      }
     }
 
     // Collection that implements NonFungible Token Standard with Collection Public and MetaDataViews
@@ -216,7 +217,7 @@
     /* Query Function (Can also be done in Arlee Contract) */
     // return true if the address holds the Partner NFT
     pub fun checkArleePartnerNFT(addr: Address): Bool {
-        let holderCap = getAccount(addr).getCapability<&{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
+        let holderCap = getAccount(addr).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
         
         if holderCap.borrow == nil {
             return false
@@ -231,7 +232,7 @@
     }
 
     pub fun getArleePartnerNFTIDs(addr: Address): [UInt64]? {
-        let holderCap = getAccount(addr).getCapability<&{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
+        let holderCap = getAccount(addr).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
         
         if holderCap.borrow == nil {
             return nil
@@ -355,7 +356,7 @@
 
         // Setup Account
         self.account.save(<- ArleePartner.createEmptyCollection() , to: ArleePartner.CollectionStoragePath)
-        self.account.link<&{ArleePartner.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.Resolver}>(ArleePartner.CollectionPublicPath, target:ArleePartner.CollectionStoragePath)
+        self.account.link<&ArleePartner.Collection{ArleePartner.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(ArleePartner.CollectionPublicPath, target:ArleePartner.CollectionStoragePath)
     }
         
  }
