@@ -10,9 +10,14 @@ flow transactions send ./cadence/transactions/setupAccount.cdc -n=testnet --sign
 // check if the account is set up 
 flow scripts execute ./cadence/scripts/checkAccountInitialized.cdc 0x4ada5fbd7073699b -n=testnet
 
+// check Flow Balance
+flow scripts execute ./cadence/scripts/checkFlowBalance.cdc 0x4ada5fbd7073699b -n=testnet
+
 /* Setup Partner NFT env */
 // setup Partner NFT Royalty, cut and ratio
 flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.cdc Zeedz 0x4ada5fbd7073699b 0.05 -n=testnet --signer=testnet-account
+
+flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.cdc Flomies 0xc68c624ebbbd3aa9 0.1 -n=testnet --signer=testnet-account
 
 // just for trying, already set in contract init
 // set Mint Price
@@ -34,6 +39,7 @@ flow transactions send ./cadence/transactions/ArleePartner/setMintable.cdc true 
 // Mint
 flow transactions send ./cadence/transactions/mintPartnerNFT.cdc ZeedzNFT Zeedz -n=testnet --signer=testnet-account
 
+flow transactions send ./cadence/transactions/mintPartnerNFT.cdc FlomiesPartnershipNFT Flomies -n=testnet --signer=testnet-account
 
 //Script Checks
 // Check a user if he / she has Partner NFT

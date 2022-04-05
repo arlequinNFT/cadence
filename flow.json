@@ -60,6 +60,17 @@
 				"privateKey" : "29afd73eb8d43a16ea06542aa043039becbeca9e2d78c6711f9859233adb35c8",
 				"publicKey" : "0feab6bc5e16ec198dd060513bcf27bd3bba1d8b9c16a4c75876345ea0ed70ca45b3c5ec4869a3b75d2ee132eb5114019256226"
 			}
+		},
+		"testnet-account-2" : {
+			"address": "3b1f18327c5becd9",
+			"key": {
+				"type" : "hex",
+				"index" : 0,
+				"signatureAlgorithm" : "ECDSA_secp256k1",
+				"hashAlgorithm" : "SHA3_256",
+				"privateKey" : "802a8bb9a847d1149eb856d0c446d6f52842e65ebf34295e5557e8428758a03b",
+				"publicKey" : "d5bc4db1f747e44074b3cefbdb468400dfa2aa4dea173a8a0f49fba089962ebb20701006d157183748dc94b6914a78027d0e31d"
+			}
 		}
 	},
 	"deployments": {
