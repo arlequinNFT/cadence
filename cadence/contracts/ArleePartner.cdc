@@ -39,6 +39,9 @@
     pub let CollectionStoragePath : StoragePath
     pub let CollectionPublicPath : PublicPath
 
+    // Dictionary to stores Partner names whether it is able to mint (i.e. acts as to enable / disable specific partner NFT minting)
+    access(account) var mintablePartnerNFTList : {String : Bool}
+
     // All Royalties (Arlee + Partners Royalty)
     access(account) let allRoyalties: {String : Royalty}
 
@@ -290,6 +293,19 @@
         return nil
     }
 
+    pub fun getMintable() : {String : Bool} {
+        var mintableDict :  {String : Bool} = {}
+        // if mintable is disabled, return all false
+        if !ArleePartner.mintable {
+            for key in ArleePartner.mintablePartnerNFTList.keys{
+                mintableDict[key] = false
+            }
+            return mintableDict
+        }
+
+        return ArleePartner.mintablePartnerNFTList
+    }
+
 
 
 
@@ -303,20 +319,34 @@
         let newRoyalty = Royalty(creditor:creditor, wallet: addr, cut: cut)
         // append royalties
         ArleePartner.allRoyalties[creditor] = newRoyalty
+
+        // add the partner name to the mintablePartnerNFTList so by default it is mintable.
+        ArleePartner.mintablePartnerNFTList[creditor] = true
     }
 
     access(account) fun setMarketplaceCut(cut: UFix64) {
-        let creditor = "Arlequin"
-        let royaltyRed = &ArleePartner.allRoyalties[creditor] as! &Royalty
+        let partner = "Arlequin"
+        let royaltyRed = &ArleePartner.allRoyalties[partner] as! &Royalty
         royaltyRed.cut = cut
     }
 
-    access(account) fun setPartnerCut(creditor: String, cut: UFix64) {
+    access(account) fun setPartnerCut(partner: String, cut: UFix64) {
         pre{
-            ArleePartner.allRoyalties.containsKey(creditor) : "This creditor does not exist"
+            ArleePartner.allRoyalties.containsKey(partner) : "This creditor does not exist"
         }
-        let royaltyRed = &ArleePartner.allRoyalties[creditor]  as! &Royalty
+        let royaltyRed = &ArleePartner.allRoyalties[partner]  as! &Royalty
         royaltyRed.cut = cut
+    }
+
+    access(account) fun setMintable(mintable: Bool) {
+        ArleePartner.mintable = mintable
+    }
+
+    access(account) fun setSpecificPartnerNFTMintable(partner: String, mintable: Bool){
+        pre{
+            ArleePartner.allRoyalties.containsKey(partner) : "This partner does not exist"
+        }
+        ArleePartner.mintablePartnerNFTList[partner] = mintable
     }
 
     access(account) fun mintPartnerNFT(recipient:&{ArleePartner.CollectionPublic}, partner: String, name:String) {
@@ -326,6 +356,11 @@
 
         let overallRoyalties = ArleePartner.getRoyalties()
         let partnerRoyalty = overallRoyalties[partner] ?? panic("Cannot find this partner royalty : ".concat(partner))
+
+        // panic if the specific partner minting is disabled
+        assert(ArleePartner.mintablePartnerNFTList[partner] != nil, message: "Cannot find this partner : ".concat(partner))
+        assert(ArleePartner.mintablePartnerNFTList[partner]!, message: "This partner NFT minting is disabled. Partner :".concat(partner))
+
         let arlequinRoyalty = overallRoyalties["Arlequin"]!
         let newNFT <- create ArleePartner.NFT(name: name, royalties:[arlequinRoyalty,partnerRoyalty])
         
@@ -335,12 +370,12 @@
         recipient.deposit(token: <- newNFT) 
     }
 
-    access(account) fun setMintable(mintable: Bool) {
-        ArleePartner.mintable = mintable
-    }
+
 
     init(){
         self.totalSupply = 0
+
+        self.mintablePartnerNFTList = {}
 
         self.mintedPartnerNFTs = {}
         self.ownedPartnerNFTs = {}

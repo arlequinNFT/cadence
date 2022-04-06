@@ -13,28 +13,6 @@ flow scripts execute ./cadence/scripts/checkAccountInitialized.cdc 0x3b1f18327c5
 // check Flow Balance
 flow scripts execute ./cadence/scripts/checkFlowBalance.cdc 0x3b1f18327c5becd9 -n=testnet
 
-/* Setup Partner NFT env */
-// setup Partner NFT Royalty, cut and ratio
-flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.cdc Zeedz 0x3b1f18327c5becd9 0.05 -n=testnet --signer=testnet-account-2
-
-flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.cdc Flomies 0xc68c624ebbbd3aa9 0.1 -n=testnet --signer=testnet-account-2
-
-// just for trying, already set in contract init
-// set Mint Price
-flow transactions send ./cadence/transactions/ArleePartner/setArleePartnerMintPrice.cdc 100.0 -n=testnet --signer=testnet-account-2
-
-// set Partner Spliting Ratio (the input number is the ratio to be in partner's wallet)
-flow transactions send ./cadence/transactions/ArleePartner/setArleePartnerSplitRatio.cdc 0.3 -n=testnet --signer=testnet-account-2
-
-// set Marketplace Cut for onwarding minted NFTs
-flow transactions send ./cadence/transactions/ArleePartner/setMarketplaceCut.cdc 0.1 -n=testnet --signer=testnet-account-2
-
-// set Partner Cut for onwarding minted NFTs
-flow transactions send ./cadence/transactions/ArleePartner/setPartnerCut.cdc Zeedz 0.2 -n=testnet --signer=testnet-account-2
-
-
-// Mintable set true
-flow transactions send ./cadence/transactions/ArleePartner/setMintable.cdc true -n=testnet --signer=testnet-account-2
 
 // Mint
 flow transactions send ./cadence/transactions/mintPartnerNFT.cdc ZeedzNFT Zeedz -n=testnet --signer=testnet-account-2
@@ -94,38 +72,6 @@ flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerTotalSupply.c
 
 
 /* Setup Partner NFT env */
-// Add Whitelist accounts
-flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcct.cdc 0x3b1f18327c5becd9 2 -n=testnet --signer=testnet-account-2
-
-// Batch Add Whitelist accounts
-flow transactions send ./cadence/transactions/ArleeScene/batchAddWhitelistAcct.cdc "{0x3b1f18327c5becd9:1}" -n=testnet --signer=testnet-account-2
-
-// Add Whitelist minting limit on top (so 3 in total)
-flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcctMint.cdc 0x3b1f18327c5becd9 1 -n=testnet --signer=testnet-account-2
-
-// Set Whitelist minting limit (ignore the previous)
-flow transactions send ./cadence/transactions/ArleeScene/setWhitelistAcctMint.cdc 0x3b1f18327c5becd9 1 -n=testnet --signer=testnet-account-2
-
-// Remove Whitelist
-flow transactions send ./cadence/transactions/ArleeScene/removeWhitelistAcct.cdc 0x3b1f18327c5becd9 -n=testnet --signer=testnet-account-2
-
-// Set Mint Price 
-flow transactions send ./cadence/transactions/ArleeScene/setArleeSceneMintPrice.cdc 20.0 -n=testnet --signer=testnet-account-2
-
-// Set Whitelist Mint Price 
-flow transactions send ./cadence/transactions/ArleeScene/setArleeSceneWhitelistMintPrice.cdc 30.0 -n=testnet --signer=testnet-account-2
-
-// Set MarketplaceCut
-flow transactions send ./cadence/transactions/ArleeScene/setMarketplaceCut.cdc 0.61 -n=testnet --signer=testnet-account-2
-
-// Set Mintable
-flow transactions send ./cadence/transactions/ArleeScene/setMintable.cdc true -n=testnet --signer=testnet-account-2
-
-// Set Whitelist Mintable
-flow transactions send ./cadence/transactions/ArleeScene/setWhitelistMintable.cdc true -n=testnet --signer=testnet-account-2
-
-
-
 // Mint Whitelist Scene
 flow transactions send ./cadence/transactions/mintSceneWhitelistNFT.cdc "1" "This is the first NFT" -n=testnet --signer=testnet-account-2
 

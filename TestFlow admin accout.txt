@@ -23,8 +23,11 @@ flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.
 // set Mint Price
 flow transactions send ./cadence/transactions/ArleePartner/setArleePartnerMintPrice.cdc 100.0 -n=testnet --signer=testnet-account
 
+// set Specific Partner NFT series mintable
+flow transactions send ./cadence/transactions/ArleePartner/setSpecificPartnerNFTMintable.cdc Zeedz false -n=testnet --signer=testnet-account
+
 // set Partner Spliting Ratio (the input number is the ratio to be in partner's wallet)
-flow transactions send ./cadence/transactions/ArleePartner/setArleePartnerSplitRatio.cdc 0.3 -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleePartner/setArleePartnerSplitRatio.cdc 1.0 -n=testnet --signer=testnet-account
 
 // set Marketplace Cut for onwarding minted NFTs
 flow transactions send ./cadence/transactions/ArleePartner/setMarketplaceCut.cdc 0.1 -n=testnet --signer=testnet-account

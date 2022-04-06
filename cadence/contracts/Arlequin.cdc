@@ -52,8 +52,8 @@ pub contract Arlequin {
         return ArleePartner.getOwner(id: id)
     }
 
-    pub fun getArleePartnerMintable() : Bool {
-        return ArleePartner.mintable
+    pub fun getArleePartnerMintable() : {String : Bool} {
+        return ArleePartner.getMintable()
     }
 
     pub fun getArleePartnerTotalSupply() : UInt64 {
@@ -133,12 +133,16 @@ pub contract Arlequin {
             ArleePartner.setMarketplaceCut(cut: cut)
         }
 
-        pub fun setPartnerCut(creditor: String, cut: UFix64) {
-            ArleePartner.setPartnerCut(creditor: creditor, cut: cut)
+        pub fun setPartnerCut(partner: String, cut: UFix64) {
+            ArleePartner.setPartnerCut(partner: partner, cut: cut)
         }
 
         pub fun setMintable(mintable: Bool) {
             ArleePartner.setMintable(mintable: mintable)
+        }
+
+        pub fun setSpecificPartnerNFTMintable(partner:String, mintable: Bool) {
+            ArleePartner.setSpecificPartnerNFTMintable(partner:partner, mintable: mintable)
         }
 
         // for Minting
