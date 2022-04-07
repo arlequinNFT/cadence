@@ -296,7 +296,11 @@
 
     access(account) fun batchAddFreeMintAcct(list:{Address : UInt64}) {
         for addr in list.keys {
-            ArleeScene.addFreeMintAcct(addr: addr, mint:list[addr]!)
+            if ArleeScene.freeMintAcct[addr] == nil {
+                ArleeScene.addFreeMintAcct(addr: addr, mint:list[addr]!)
+            } else {
+                ArleeScene.addFreeMintAcctQuota(addr: addr, additionalMint: list[addr]!)
+            }
         }
     }
 
