@@ -1,6 +1,6 @@
 //Arlee Partner NFT Contract
 
-/*  This contract defines Voter NFTs.
+/*  This contract defines ArleePartner NFTs.
     Users can buy this NFT whenever to enjoy advanced features on Arlequin paint.
     The fund received will not deposit to the Admin wallet, 
     but another wallet that will be shared to the partners.
@@ -15,16 +15,16 @@
  import NonFungibleToken from "./NonFungibleToken.cdc"
  import MetadataViews from "./MetadataViews.cdc"
 
- pub contract Voter : NonFungibleToken{
+ pub contract ArleePartner : NonFungibleToken{
 
-    // Total number of Voter NFT in existance
+    // Total number of ArleePartner NFT in existance
     pub var totalSupply: UInt64 
 
-    // Minted Voter NFT maps with name {ID : Name}
-    access(account) var mintedVoterNFTs : {UInt64 : String}
+    // Minted ArleePartner NFT maps with name {ID : Name}
+    access(account) var mintedArleePartnerNFTs : {UInt64 : String}
 
     // Stores all ownedScenes { Owner : Scene IDs }
-    access(account) var ownedVoterNFTs : {Address : [UInt64]}
+    access(account) var ownedArleePartnerNFTs : {Address : [UInt64]}
 
     // Mint Status
     pub var mintable: Bool
@@ -39,8 +39,8 @@
     pub let CollectionStoragePath : StoragePath
     pub let CollectionPublicPath : PublicPath
 
-    // Dictionary to stores Partner names whether it is able to mint (i.e. acts as to enable / disable specific Voter NFT minting)
-    access(account) var mintableVoterNFTList : {String : Bool}
+    // Dictionary to stores Partner names whether it is able to mint (i.e. acts as to enable / disable specific ArleePartner NFT minting)
+    access(account) var mintableArleePartnerNFTList : {String : Bool}
 
     // All Royalties (Arlee + Partners Royalty)
     access(account) let allRoyalties: {String : Royalty}
@@ -58,19 +58,19 @@
         }
     }
 
-    // VoterNFT (Will only be given name and royalty)
+    // ArleePartnerNFT (Will only be given name and royalty)
     pub resource NFT : NonFungibleToken.INFT, MetadataViews.Resolver {
         pub let id: UInt64
         pub let name: String
         access(contract) let royalties: [Royalty]
 
         init(name: String, royalties:[Royalty]){
-            self.id = Voter.totalSupply
+            self.id = ArleePartner.totalSupply
             self.name = name
             self.royalties = royalties
 
             // update totalSupply
-            Voter.totalSupply = Voter.totalSupply +1
+            ArleePartner.totalSupply = ArleePartner.totalSupply +1
         }
 
         // Function to return royalty
@@ -108,7 +108,7 @@
         pub fun batchDeposit(collection: @NonFungibleToken.Collection)
         pub fun borrowNFT(id : UInt64) : &NonFungibleToken.NFT
         pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver}
-        pub fun borrowVoter(id : UInt64) : &Voter.NFT? {
+        pub fun borrowArleePartner(id : UInt64) : &ArleePartner.NFT? {
             // If the result isn't nil, the id of the returned reference
             // should be the same as the argument to the function
             post {
@@ -131,35 +131,35 @@
 
             // remove all IDs owned in the contract upon destruction
             if self.owner != nil {
-                Voter.ownedVoterNFTs.remove(key: self.owner!.address)
+                ArleePartner.ownedArleePartnerNFTs.remove(key: self.owner!.address)
             }
         }
 
         pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
             let token <- self.ownedNFTs.remove(key: withdrawID) 
-                ?? panic("Cannot find Voter NFT in your Collection, id: ".concat(withdrawID.toString()))
+                ?? panic("Cannot find ArleePartner NFT in your Collection, id: ".concat(withdrawID.toString()))
 
             emit Withdraw(id: token.id, from: self.owner?.address)
 
             // update IDs for contract record
             if self.owner != nil {
-                Voter.ownedVoterNFTs[self.owner!.address] = self.getIDs()
+                ArleePartner.ownedArleePartnerNFTs[self.owner!.address] = self.getIDs()
             }
 
             return <- token
         }
 
         pub fun batchWithdraw(withdrawIDs: [UInt64]): @NonFungibleToken.Collection{
-            let collection <- Voter.createEmptyCollection()
+            let collection <- ArleePartner.createEmptyCollection()
             for id in withdrawIDs {
-                let nft <- self.ownedNFTs.remove(key: id) ?? panic("Cannot find Voter NFT in your Collection, id: ".concat(id.toString()))
+                let nft <- self.ownedNFTs.remove(key: id) ?? panic("Cannot find ArleePartner NFT in your Collection, id: ".concat(id.toString()))
                 collection.deposit(token: <- nft) 
             }
             return <- collection
         }
 
         pub fun deposit(token: @NonFungibleToken.NFT){
-            let token <- token as! @Voter.NFT
+            let token <- token as! @ArleePartner.NFT
 
             let id:UInt64 = token.id
 
@@ -169,7 +169,7 @@
 
             // update IDs for contract record
             if self.owner != nil {
-                Voter.ownedVoterNFTs[self.owner!.address] = self.getIDs()
+                ArleePartner.ownedArleePartnerNFTs[self.owner!.address] = self.getIDs()
             }
 
             destroy oldToken
@@ -191,13 +191,13 @@
             return &self.ownedNFTs[id] as &NonFungibleToken.NFT
         }
 
-        pub fun borrowVoter(id: UInt64): &Voter.NFT? {
+        pub fun borrowArleePartner(id: UInt64): &ArleePartner.NFT? {
             if self.ownedNFTs[id] == nil {
                 return nil
             }
 
             let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-            let ref = nftRef as! &Voter.NFT
+            let ref = nftRef as! &ArleePartner.NFT
 
             return ref
             
@@ -206,9 +206,9 @@
         //MetadataViews Implementation
         pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver} {
             let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-            let VoterRef = nftRef as! &Voter.NFT
+            let ArleePartnerRef = nftRef as! &ArleePartner.NFT
 
-            return VoterRef as &{MetadataViews.Resolver}
+            return ArleePartnerRef as &{MetadataViews.Resolver}
         }
 
     }
@@ -218,15 +218,15 @@
     }
 
     /* Query Function (Can also be done in Arlee Contract) */
-    // return true if the address holds the Voter NFT
-    pub fun checkVoterNFT(addr: Address): Bool {
-        let holderCap = getAccount(addr).getCapability<&Voter.Collection{Voter.CollectionPublic}>(Voter.CollectionPublicPath)
+    // return true if the address holds the ArleePartner NFT
+    pub fun checkArleePartnerNFT(addr: Address): Bool {
+        let holderCap = getAccount(addr).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
         
         if holderCap.borrow == nil {
             return false
         }
         
-        let holderRef = holderCap.borrow() ?? panic("Cannot borrow Arlee Voter NFT Reference")
+        let holderRef = holderCap.borrow() ?? panic("Cannot borrow Arlee ArleePartner NFT Reference")
         let ids = holderRef.getIDs()
         if ids.length < 1{
             return false
@@ -234,31 +234,31 @@
         return true
     }
 
-    pub fun getVoterNFTIDs(addr: Address): [UInt64]? {
-        let holderCap = getAccount(addr).getCapability<&Voter.Collection{Voter.CollectionPublic}>(Voter.CollectionPublicPath)
+    pub fun getArleePartnerNFTIDs(addr: Address): [UInt64]? {
+        let holderCap = getAccount(addr).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
         
         if holderCap.borrow == nil {
             return nil
         }
         
-        let holderRef = holderCap.borrow() ?? panic("Cannot borrow Arlee Voter Collection Reference")
+        let holderRef = holderCap.borrow() ?? panic("Cannot borrow Arlee ArleePartner Collection Reference")
         return holderRef.getIDs()
 
     }
 
-    pub fun getVoterNFTName(id: UInt64) : String? {
-        return Voter.mintedVoterNFTs[id]
+    pub fun getArleePartnerNFTName(id: UInt64) : String? {
+        return ArleePartner.mintedArleePartnerNFTs[id]
     }
 
-    pub fun getVoterNFTNames(addr: Address) : [String]? {
-        let ids = Voter.getVoterNFTIDs(addr: addr)
+    pub fun getArleePartnerNFTNames(addr: Address) : [String]? {
+        let ids = ArleePartner.getArleePartnerNFTIDs(addr: addr)
         if ids == nil || ids!.length == 0 {
             return nil
         }
 
         var list : [String] = []
         for id in ids! {
-            let name = Voter.getVoterNFTName(id: id) ?? panic("This id is not mapped to a Voter NFT Name")
+            let name = ArleePartner.getArleePartnerNFTName(id: id) ?? panic("This id is not mapped to a ArleePartner NFT Name")
             if !list.contains(name) {
                 list.append(name)
             }
@@ -266,27 +266,27 @@
         return list
     }
 
-    pub fun getAllVoterNFTNames() : {UInt64 : String} {
-        return Voter.mintedVoterNFTs
+    pub fun getAllArleePartnerNFTNames() : {UInt64 : String} {
+        return ArleePartner.mintedArleePartnerNFTs
     }
 
     pub fun getRoyalties(): {String : Royalty} {
-        let royalties = Voter.allRoyalties
-        return Voter.allRoyalties
+        let royalties = ArleePartner.allRoyalties
+        return ArleePartner.allRoyalties
     }
 
     pub fun getPartnerRoyalty(partner: String) : Royalty? {
-        for partnerName in Voter.allRoyalties.keys{
+        for partnerName in ArleePartner.allRoyalties.keys{
             if partnerName == partner{
-                return Voter.allRoyalties[partnerName]!
+                return ArleePartner.allRoyalties[partnerName]!
             }
         }
         return nil
     }
 
     pub fun getOwner(id: UInt64) : Address? {
-        for addr in Voter.ownedVoterNFTs.keys{
-            if Voter.ownedVoterNFTs[addr]!.contains(id) {
+        for addr in ArleePartner.ownedArleePartnerNFTs.keys{
+            if ArleePartner.ownedArleePartnerNFTs[addr]!.contains(id) {
                 return addr
             }
         }
@@ -296,14 +296,14 @@
     pub fun getMintable() : {String : Bool} {
         var mintableDict :  {String : Bool} = {}
         // if mintable is disabled, return all false
-        if !Voter.mintable {
-            for key in Voter.mintableVoterNFTList.keys{
+        if !ArleePartner.mintable {
+            for key in ArleePartner.mintableArleePartnerNFTList.keys{
                 mintableDict[key] = false
             }
             return mintableDict
         }
 
-        return Voter.mintableVoterNFTList
+        return ArleePartner.mintableArleePartnerNFTList
     }
 
 
@@ -314,74 +314,74 @@
     // Add a new recipient as a partner to receive royalty cut
     access(account) fun addPartnerRoyaltyCut(creditor: String, addr: Address, cut: UFix64 ) {
         // check if this creditor already exist
-        assert(!Voter.allRoyalties.containsKey(creditor), message:"This Royalty already exist")  
+        assert(!ArleePartner.allRoyalties.containsKey(creditor), message:"This Royalty already exist")  
 
         let newRoyalty = Royalty(creditor:creditor, wallet: addr, cut: cut)
         // append royalties
-        Voter.allRoyalties[creditor] = newRoyalty
+        ArleePartner.allRoyalties[creditor] = newRoyalty
 
-        // add the partner name to the mintableVoterNFTList so by default it is mintable.
-        Voter.mintableVoterNFTList[creditor] = true
+        // add the partner name to the mintableArleePartnerNFTList so by default it is mintable.
+        ArleePartner.mintableArleePartnerNFTList[creditor] = true
     }
 
     access(account) fun setMarketplaceCut(cut: UFix64) {
         let partner = "Arlequin"
-        let royaltyRed = &Voter.allRoyalties[partner] as! &Royalty
+        let royaltyRed = &ArleePartner.allRoyalties[partner] as! &Royalty
         royaltyRed.cut = cut
     }
 
     access(account) fun setPartnerCut(partner: String, cut: UFix64) {
         pre{
-            Voter.allRoyalties.containsKey(partner) : "This creditor does not exist"
+            ArleePartner.allRoyalties.containsKey(partner) : "This creditor does not exist"
         }
-        let royaltyRed = &Voter.allRoyalties[partner]  as! &Royalty
+        let royaltyRed = &ArleePartner.allRoyalties[partner]  as! &Royalty
         royaltyRed.cut = cut
     }
 
     access(account) fun setMintable(mintable: Bool) {
-        Voter.mintable = mintable
+        ArleePartner.mintable = mintable
     }
 
     access(account) fun setSpecificPartnerNFTMintable(partner: String, mintable: Bool){
         pre{
-            Voter.allRoyalties.containsKey(partner) : "This partner does not exist"
+            ArleePartner.allRoyalties.containsKey(partner) : "This partner does not exist"
         }
-        Voter.mintableVoterNFTList[partner] = mintable
+        ArleePartner.mintableArleePartnerNFTList[partner] = mintable
     }
 
-    access(account) fun mintVoterNFT(recipient:&{Voter.CollectionPublic}, partner: String, name:String) {
+    access(account) fun mintArleePartnerNFT(recipient:&{ArleePartner.CollectionPublic}, partner: String, name:String) {
         pre{
-            Voter.mintable : "Public minting is not available at the moment."
+            ArleePartner.mintable : "Public minting is not available at the moment."
         }
 
-        let overallRoyalties = Voter.getRoyalties()
+        let overallRoyalties = ArleePartner.getRoyalties()
         let partnerRoyalty = overallRoyalties[partner] ?? panic("Cannot find this partner royalty : ".concat(partner))
 
         // panic if the specific partner minting is disabled
-        assert(Voter.mintableVoterNFTList[partner] != nil, message: "Cannot find this partner : ".concat(partner))
-        assert(Voter.mintableVoterNFTList[partner]!, message: "This partner NFT minting is disabled. Partner :".concat(partner))
+        assert(ArleePartner.mintableArleePartnerNFTList[partner] != nil, message: "Cannot find this partner : ".concat(partner))
+        assert(ArleePartner.mintableArleePartnerNFTList[partner]!, message: "This partner NFT minting is disabled. Partner :".concat(partner))
 
         let arlequinRoyalty = overallRoyalties["Arlequin"]!
-        let newNFT <- create Voter.NFT(name: name, royalties:[arlequinRoyalty,partnerRoyalty])
+        let newNFT <- create ArleePartner.NFT(name: name, royalties:[arlequinRoyalty,partnerRoyalty])
         
-        Voter.mintedVoterNFTs[newNFT.id] = newNFT.name
+        ArleePartner.mintedArleePartnerNFTs[newNFT.id] = newNFT.name
 
         emit Created(id:newNFT.id, royalties:newNFT.getRoyalties())
         recipient.deposit(token: <- newNFT) 
     }
 
-    access(account) fun adminMintVoterNFT(recipient:&{Voter.CollectionPublic}, partner: String, name:String) {
+    access(account) fun adminMintArleePartnerNFT(recipient:&{ArleePartner.CollectionPublic}, partner: String, name:String) {
 
-        let overallRoyalties = Voter.getRoyalties()
+        let overallRoyalties = ArleePartner.getRoyalties()
         let partnerRoyalty = overallRoyalties[partner] ?? panic("Cannot find this partner royalty : ".concat(partner))
 
         // panic if the specific partner is missing, regardless of whether its mintable.
-        assert(Voter.mintableVoterNFTList[partner] != nil, message: "Cannot find this partner : ".concat(partner))
+        assert(ArleePartner.mintableArleePartnerNFTList[partner] != nil, message: "Cannot find this partner : ".concat(partner))
 
         let arlequinRoyalty = overallRoyalties["Arlequin"]!
-        let newNFT <- create Voter.NFT(name: name, royalties:[arlequinRoyalty,partnerRoyalty])
+        let newNFT <- create ArleePartner.NFT(name: name, royalties:[arlequinRoyalty,partnerRoyalty])
         
-        Voter.mintedVoterNFTs[newNFT.id] = newNFT.name
+        ArleePartner.mintedArleePartnerNFTs[newNFT.id] = newNFT.name
 
         emit Created(id:newNFT.id, royalties:newNFT.getRoyalties())
         recipient.deposit(token: <- newNFT) 
@@ -392,24 +392,24 @@
     init(){
         self.totalSupply = 0
 
-        self.mintableVoterNFTList = {}
+        self.mintableArleePartnerNFTList = {}
 
-        self.mintedVoterNFTs = {}
-        self.ownedVoterNFTs = {}
+        self.mintedArleePartnerNFTs = {}
+        self.ownedArleePartnerNFTs = {}
 
         self.mintable = false
 
         // Paths
-        self.CollectionStoragePath = /storage/Voter
-        self.CollectionPublicPath = /public/Voter
+        self.CollectionStoragePath = /storage/ArleePartner
+        self.CollectionPublicPath = /public/ArleePartner
 
         // Royalty
         self.allRoyalties = {"Arlequin" : Royalty(creditor: "Arlequin", wallet: self.account.address, cut: 0.05)}
 
         // Setup Account
         
-        self.account.save(<- Voter.createEmptyCollection() , to: Voter.CollectionStoragePath)
-        self.account.link<&Voter.Collection{Voter.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(Voter.CollectionPublicPath, target:Voter.CollectionStoragePath)
+        self.account.save(<- ArleePartner.createEmptyCollection() , to: ArleePartner.CollectionStoragePath)
+        self.account.link<&ArleePartner.Collection{ArleePartner.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(ArleePartner.CollectionPublicPath, target:ArleePartner.CollectionStoragePath)
         
     }
         

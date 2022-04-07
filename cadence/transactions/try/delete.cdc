@@ -11,20 +11,30 @@ transaction() {
         let sceneNFTStoragePath = ArleeScene.CollectionStoragePath
         let sceneNFTPublicPath = ArleeScene.CollectionPublicPath
 
+        if acct.borrow<&AnyResource>(from: /storage/ArleePartner) != nil {
+            let oldCollection <- acct.load<@AnyResource>(from: /storage/ArleePartner) ?? panic("Cannot find arleepartner Collection")
+            destroy oldCollection
+        }
         
-        let oldCollection <- acct.load<@AnyResource>(from: /storage/ArleePartner) ?? panic("Cannot find voter Collection")
-        destroy oldCollection
-        
-        let oldddCollection <- acct.load<@AnyResource>(from: /storage/ArleeScene) ?? panic("Cannot find scene Collection")
-        destroy oldddCollection
+        if acct.borrow<&AnyResource>(from: /storage/ArleeScene) != nil {
+            let oldddCollection <- acct.load<@AnyResource>(from: /storage/ArleeScene) ?? panic("Cannot find scene Collection")
+            destroy oldddCollection
+        }
 
-        /* 
-        let adminCollection <- acct.load<@AnyResource>(from: Arlequin.ArleePartnerAdminStoragePath) ?? panic("Cannot find admin 1 Collection")
-        destroy adminCollection
+        if acct.borrow<&AnyResource>(from: /storage/ArleePartnerAdmin) != nil {
+            let adminCollection <- acct.load<@AnyResource>(from: /storage/ArleePartnerAdmin) ?? panic("Cannot find admin 1 Collection")
+            destroy adminCollection
+        }
 
-        let adminAlsoCollection <- acct.load<@AnyResource>(from: Arlequin.ArleeSceneAdminStoragePath) ?? panic("Cannot find admin 2 Collection")
-        destroy adminAlsoCollection
-        */
+        if acct.borrow<&AnyResource>(from: /storage/ArleeSceneAdmin) != nil {
+            let adminAlsoCollection <- acct.load<@AnyResource>(from: /storage/ArleeSceneAdmin) ?? panic("Cannot find admin 2 Collection")
+            destroy adminAlsoCollection
+        }
+
+        if acct.borrow<&AnyResource>(from: /storage/VoterAdmin) != nil {
+            let admin1AlsoCollection <- acct.load<@AnyResource>(from: /storage/VoterAdmin) ?? panic("Cannot find admin 3 Collection")
+            destroy admin1AlsoCollection
+        }
     }
 
     execute {

@@ -2,7 +2,7 @@ import Arlequin from "../../contracts/Arlequin.cdc"
 
 pub fun main(id: UInt64) : Address? {
     // This is got from the mapping inside the contract, better double check with other functions
-    let addr = Arlequin.getVoterOwner(id: id)
+    let addr = Arlequin.getArleePartnerOwner(id: id)
 
 
     // Double check if the return address really has the NFT
@@ -11,12 +11,12 @@ pub fun main(id: UInt64) : Address? {
     }
 
     // Nil if the user does not exist / does not have Collection set up
-    if Arlequin.getVoterNFTIDs(addr: addr!) == nil {
+    if Arlequin.getArleePartnerNFTIDs(addr: addr!) == nil {
         return nil
     }
 
     // Nil if the user does not have the NFT even the mapping says yes
-    if !Arlequin.getVoterNFTIDs(addr: addr!)!.contains(id) {
+    if !Arlequin.getArleePartnerNFTIDs(addr: addr!)!.contains(id) {
         return nil
     }
 

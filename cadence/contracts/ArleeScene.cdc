@@ -2,7 +2,7 @@
 
 /*  This contract defines ArleeScene NFTs.
     Users can mint this NFT with FLOW
-    Users owning the Voter NFT can mint an Advanced One.
+    Users owning the ArleePartner NFT can mint an Advanced One.
     The fund received will be deposited to the Admin wallet.
 
     Will be incorporated to Arlee Contract 
@@ -18,7 +18,7 @@
     // Total number of ArleeScene NFT in existance
     pub var totalSupply: UInt64 
 
-    // Controls whether the VoterNFT function
+    // Controls whether the ArleePartnerNFT function
     // Stores all minted Scenes { ID : CID }
     access(account) var mintedScenes : {UInt64 : String}
     // Stores all ownedScenes { Owner : Scene IDs }
