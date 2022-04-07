@@ -2,70 +2,69 @@ import FungibleToken from "./FungibleToken.cdc"
 import NonFungibleToken from "./NonFungibleToken.cdc"
 import MetadataViews from "./MetadataViews.cdc"
 import FlowToken from "./FlowToken.cdc"
-import ArleePartner from "./ArleePartner.cdc"
+import Voter from "./Voter.cdc"
 import ArleeScene from "./ArleeScene.cdc"
 
 pub contract Arlequin {
     
-    pub var partnerNFTPrice : UFix64
+    pub var voterNFTPrice : UFix64 
     pub var sceneNFTPrice : UFix64
-    pub var sceneNFTWhitelistPrice : UFix64
 
-    // This is the ratio to partners in partnerNFT sales, ratio to Arlequin will be (1 - partnerSplitRatio)
+    // This is the ratio to partners in voterNFT sales, ratio to Arlequin will be (1 - partnerSplitRatio)
     pub var partnerSplitRatio : UFix64
 
     // Paths
-    pub let ArleePartnerAdminStoragePath : StoragePath
+    pub let VoterAdminStoragePath : StoragePath
     pub let ArleeSceneAdminStoragePath : StoragePath
 
     // Query Functions
-    /* For ArleePartner */
-    pub fun checkArleePartnerNFT(addr: Address): Bool {
-        return ArleePartner.checkArleePartnerNFT(addr: addr)
+    /* For Voter */
+    pub fun checkVoterNFT(addr: Address): Bool {
+        return Voter.checkVoterNFT(addr: addr)
     }
 
-    pub fun getArleePartnerNFTIDs(addr: Address) : [UInt64]? {
-        return ArleePartner.getArleePartnerNFTIDs(addr: addr)
+    pub fun getVoterNFTIDs(addr: Address) : [UInt64]? {
+        return Voter.getVoterNFTIDs(addr: addr)
     }
 
-    pub fun getArleePartnerNFTName(id: UInt64) : String? {
-        return ArleePartner.getPartnerNFTName(id: id)
+    pub fun getVoterNFTName(id: UInt64) : String? {
+        return Voter.getVoterNFTName(id: id)
     }
 
-    pub fun getArleePartnerNFTNames(addr: Address) : [String]? {
-        return ArleePartner.getPartnerNFTNames(addr: addr)
+    pub fun getVoterNFTNames(addr: Address) : [String]? {
+        return Voter.getVoterNFTNames(addr: addr)
     }
 
-    pub fun getArleePartnerAllNFTNames() : {UInt64 : String} {
-        return ArleePartner.getAllPartnerNFTNames()
+    pub fun getVoterAllNFTNames() : {UInt64 : String} {
+        return Voter.getAllVoterNFTNames()
     }
 
-    pub fun getArleePartnerRoyalties() : {String : ArleePartner.Royalty} {
-        return ArleePartner.getRoyalties()
+    pub fun getVoterRoyalties() : {String : Voter.Royalty} {
+        return Voter.getRoyalties()
     }
 
-    pub fun getArleePartnerRoyaltiesByPartner(partner: String) : ArleePartner.Royalty? {
-        return ArleePartner.getPartnerRoyalty(partner: partner)
+    pub fun getVoterRoyaltiesByPartner(partner: String) : Voter.Royalty? {
+        return Voter.getPartnerRoyalty(partner: partner)
     }
 
-    pub fun getArleePartnerOwner(id: UInt64) : Address? {
-        return ArleePartner.getOwner(id: id)
+    pub fun getVoterOwner(id: UInt64) : Address? {
+        return Voter.getOwner(id: id)
     }
 
-    pub fun getArleePartnerMintable() : {String : Bool} {
-        return ArleePartner.getMintable()
+    pub fun getVoterMintable() : {String : Bool} {
+        return Voter.getMintable()
     }
 
-    pub fun getArleePartnerTotalSupply() : UInt64 {
-        return ArleePartner.totalSupply
+    pub fun getVoterTotalSupply() : UInt64 {
+        return Voter.totalSupply
     }
 
     // For Minting 
-    pub fun getArleePartnerMintPrice() : UFix64 {
-        return Arlequin.partnerNFTPrice
+    pub fun getVoterMintPrice() : UFix64 {
+        return Arlequin.voterNFTPrice
     }
 
-    pub fun getArleePartnerSplitRatio() : UFix64 {
+    pub fun getVoterSplitRatio() : UFix64 {
         return Arlequin.partnerSplitRatio
     }
 
@@ -88,12 +87,12 @@ pub contract Arlequin {
         return ArleeScene.getAllArleeSceneCID()
     }
 
-    pub fun getArleeSceneWhitelist() : {Address : UInt64} {
-        return ArleeScene.getWhitelist()
+    pub fun getArleeSceneFreeMintAcct() : {Address : UInt64} {
+        return ArleeScene.getFreeMintAcct()
     }
 
-    pub fun getArleeSceneWhitelistQuota(addr: Address) : UInt64? {
-        return ArleeScene.getWhitelistQuota(addr: addr)
+    pub fun getArleeSceneFreeMintQuota(addr: Address) : UInt64? {
+        return ArleeScene.getFreeMintQuota(addr: addr)
     }
 
     pub fun getArleeSceneOwner(id: UInt64) : Address? {
@@ -102,10 +101,6 @@ pub contract Arlequin {
 
     pub fun getArleeSceneMintable() : Bool {
         return ArleeScene.mintable
-    }
-
-    pub fun getArleeSceneWhitelistMintable() : Bool {
-        return ArleeScene.whitelistMintable
     }
 
     pub fun getArleeSceneTotalSupply() : UInt64 {
@@ -117,44 +112,50 @@ pub contract Arlequin {
         return Arlequin.sceneNFTPrice
     }
 
-    pub fun getArleeSceneWhitelistMintPrice() : UFix64 {
-        return Arlequin.sceneNFTWhitelistPrice
-    }
 
 
-
-    pub resource ArleePartnerAdmin {
-        // Arlee Partner NFT Admin Functinos
+    pub resource VoterAdmin {
+        // Voter NFT Admin Functinos
         pub fun addPartnerRoyaltyCut(creditor: String, addr: Address, cut: UFix64 ) {
-            ArleePartner.addPartnerRoyaltyCut(creditor: creditor, addr: addr, cut: cut )
+            Voter.addPartnerRoyaltyCut(creditor: creditor, addr: addr, cut: cut )
         }
 
         pub fun setMarketplaceCut(cut: UFix64) {
-            ArleePartner.setMarketplaceCut(cut: cut)
+            Voter.setMarketplaceCut(cut: cut)
         }
 
         pub fun setPartnerCut(partner: String, cut: UFix64) {
-            ArleePartner.setPartnerCut(partner: partner, cut: cut)
+            Voter.setPartnerCut(partner: partner, cut: cut)
         }
 
         pub fun setMintable(mintable: Bool) {
-            ArleePartner.setMintable(mintable: mintable)
+            Voter.setMintable(mintable: mintable)
         }
 
         pub fun setSpecificPartnerNFTMintable(partner:String, mintable: Bool) {
-            ArleePartner.setSpecificPartnerNFTMintable(partner:partner, mintable: mintable)
+            Voter.setSpecificPartnerNFTMintable(partner:partner, mintable: mintable)
         }
 
         // for Minting
-        pub fun setArleePartnerMintPrice(price: UFix64) {
-            Arlequin.partnerNFTPrice = price
+        pub fun setVoterMintPrice(price: UFix64) {
+            Arlequin.voterNFTPrice = price
         }
 
-        pub fun setArleePartnerSplitRatio(ratio: UFix64) {
+        pub fun setVoterSplitRatio(ratio: UFix64) {
             pre{
                 ratio <= 1.0 : "The spliting ratio cannot be greater than 1.0"
             }
             Arlequin.partnerSplitRatio = ratio
+        }
+
+        // Add flexibility to giveaway : an Admin mint function.
+        pub fun adminMintVoterNFT(partner: String, name:String){
+            // get all merchant receiving vault references 
+            let recipientCap = getAccount(Arlequin.account.address).getCapability<&Voter.Collection{Voter.CollectionPublic}>(Voter.CollectionPublicPath)
+            let recipient = recipientCap.borrow() ?? panic("Cannot borrow Arlequin's Collection Public")
+
+            // deposit
+            Voter.adminMintVoterNFT(recipient:recipient, partner: partner, name:name)
         }
     }
 
@@ -164,34 +165,30 @@ pub contract Arlequin {
             ArleeScene.setMarketplaceCut(cut: cut)
         }
 
-        pub fun addWhitelistAcct(addr: Address, mint:UInt64) {
-            ArleeScene.addWhitelistAcct(addr: addr, mint:mint)
+        pub fun addFreeMintAcct(addr: Address, mint:UInt64) {
+            ArleeScene.addFreeMintAcct(addr: addr, mint:mint)
         }
 
-        pub fun batchAddWhitelistAcct(list:{Address : UInt64}) {
-            ArleeScene.batchAddWhitelistAcct(list: list)
+        pub fun batchAddFreeMintAcct(list:{Address : UInt64}) {
+            ArleeScene.batchAddFreeMintAcct(list: list)
         }
 
-        pub fun removeWhitelistAcct(addr: Address) {
-            ArleeScene.removeWhitelistAcct(addr: addr)
+        pub fun removeFreeMintAcct(addr: Address) {
+            ArleeScene.removeFreeMintAcct(addr: addr)
         }
 
-        // set an already whitelisted acct's minting limit
-        pub fun setWhitelistAcctMint(addr: Address, mint: UInt64) {
-            ArleeScene.setWhitelistAcctMint(addr: addr, mint: mint)
+        // set an acct's free minting limit
+        pub fun setFreeMintAcctQuota(addr: Address, mint: UInt64) {
+            ArleeScene.setFreeMintAcctQuota(addr: addr, mint: mint)
         }
 
-        // add to an already whitelisted acct's minting limit
-        pub fun addWhitelistAcctMint(addr: Address, additionalMint: UInt64) {
-            ArleeScene.addWhitelistAcctMint(addr: addr, additionalMint: additionalMint)
+        // add to an acct's free minting limit
+        pub fun addFreeMintAcctQuota(addr: Address, additionalMint: UInt64) {
+            ArleeScene.addFreeMintAcctQuota(addr: addr, additionalMint: additionalMint)
         }
 
         pub fun setMintable(mintable: Bool) {
             ArleeScene.setMintable(mintable: mintable)
-        }
-
-        pub fun setWhitelistMintable(mintable: Bool) {
-            ArleeScene.setWhitelistMintable(mintable: mintable)
         }
 
         // for minting
@@ -199,27 +196,24 @@ pub contract Arlequin {
             Arlequin.sceneNFTPrice = price
         }
 
-        pub fun setArleeSceneWhitelistMintPrice(price: UFix64) {
-            Arlequin.sceneNFTWhitelistPrice = price
-        }
     }
 
-    /* Public Minting for ArleePartnerNFT */
-    pub fun mintPartnerNFT(buyer: Address, name: String, partner: String, paymentVault:  @FungibleToken.Vault) {
+    /* Public Minting for VoterNFT */
+    pub fun mintVoterNFT(buyer: Address, name: String, partner: String, paymentVault:  @FungibleToken.Vault) {
         pre{
-            paymentVault.balance >= Arlequin.partnerNFTPrice: "Insufficient payment amount."
+            paymentVault.balance >= Arlequin.voterNFTPrice: "Insufficient payment amount."
             paymentVault.getType() == Type<@FlowToken.Vault>(): "payment type not in FlowToken.Vault."
         }
 
         // get all merchant receiving vault references 
         let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
 
-        let partnerRoyalty = self.getArleePartnerRoyaltiesByPartner(partner:partner) ?? panic ("Cannot find partner : ".concat(partner))
+        let partnerRoyalty = self.getVoterRoyaltiesByPartner(partner:partner) ?? panic ("Cannot find partner : ".concat(partner))
         let partnerAddr = partnerRoyalty.wallet
         let partnerVaultCap = getAccount(partnerAddr).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver)
         let partnerVault = partnerVaultCap.borrow() ?? panic("Cannot borrow partner's receiving vault reference")
 
-        let recipientCap = getAccount(buyer).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
+        let recipientCap = getAccount(buyer).getCapability<&Voter.Collection{Voter.CollectionPublic}>(Voter.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
         // splitting vaults for partner and arlequin
@@ -229,7 +223,7 @@ pub contract Arlequin {
         arlequinVault.deposit(from: <- paymentVault)
         partnerVault.deposit(from: <- toPartnerVault)
 
-        ArleePartner.mintPartnerNFT(recipient:recipient, partner: partner, name:name)
+        Voter.mintVoterNFT(recipient:recipient, partner: partner, name:name)
     }
 
     /* Public Minting for ArleeSceneNFT */
@@ -251,37 +245,34 @@ pub contract Arlequin {
         ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, description:description)
     }
 
-    /* Whitelist Minting for ArleeSceneNFT */
-    pub fun mintSceneWhitelistNFT(buyer: Address, cid: String, description:String, paymentVault:  @FungibleToken.Vault) {
+    /* Free Minting for ArleeSceneNFT */
+    pub fun mintSceneFreeMintNFT(buyer: Address, cid: String, description:String) {
         pre{
-            paymentVault.balance >= Arlequin.sceneNFTWhitelistPrice: "Insufficient payment amount."
-            paymentVault.getType() == Type<@FlowToken.Vault>(): "payment type not in FlowToken.Vault."
+            Arlequin.getArleeSceneFreeMintQuota(addr: buyer) != nil : "You are not given free mint quotas"
+            Arlequin.getArleeSceneFreeMintQuota(addr: buyer)! > 0 : "You ran out of free mint quotas"
         }
-
-        // get all merchant receiving vault references 
-        let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receiving vault reference")
 
         let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
-        // deposit
-        arlequinVault.deposit(from: <- paymentVault)
+        ArleeScene.freeMintAcct[buyer] = ArleeScene.freeMintAcct[buyer]! - 1
 
-        ArleeScene.mintSceneWhitelistNFT(recipient:recipient, cid:cid, description:description)
+        // deposit
+        ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, description:description)
     }
 
     init(){
-        self.partnerNFTPrice = 10.0
+        self.voterNFTPrice = 10.0
         self.sceneNFTPrice = 10.0
-        self.sceneNFTWhitelistPrice = 10.0
 
         self.partnerSplitRatio = 0.4
 
-        self.ArleePartnerAdminStoragePath = /storage/ArleePartnerAdmin
+        self.VoterAdminStoragePath = /storage/VoterAdmin
         self.ArleeSceneAdminStoragePath = /storage/ArleeSceneAdmin              
-
-        self.account.save(<- create ArleePartnerAdmin(), to:Arlequin.ArleePartnerAdminStoragePath)
+        
+        self.account.save(<- create VoterAdmin(), to:Arlequin.VoterAdminStoragePath)
         self.account.save(<- create ArleeSceneAdmin(), to:Arlequin.ArleeSceneAdminStoragePath)
+        
     }
 
 

@@ -10,76 +10,81 @@ flow transactions send ./cadence/transactions/setupAccount.cdc -n=emulator --sig
 // check if the account is set up 
 flow scripts execute ./cadence/scripts/checkAccountInitialized.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
-/* Setup Partner NFT env */
-// setup Partner NFT Royalty, cut and ratio
-flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.cdc Zeedz 0xf8d6e0586b0a20c7 0.05 -n=emulator --signer=emulator-account
+// check Flow Balance
+flow scripts execute ./cadence/scripts/checkFlowBalance.cdc 0xf8d6e0586b0a20c7 -n=emulator
+
+/* Setup Voter NFT env */
+// setup Voter NFT Royalty, cut and ratio
+flow transactions send ./cadence/transactions/Voter/addPartnerRoyaltyCut.cdc Zeedz 0xf8d6e0586b0a20c7 0.05 -n=emulator --signer=emulator-account
 
 // just for trying, already set in contract init
 // set Mint Price
-flow transactions send ./cadence/transactions/ArleePartner/setArleePartnerMintPrice.cdc 100.0 -n=emulator --signer=emulator-account
+flow transactions send ./cadence/transactions/Voter/setVoterMintPrice.cdc 100.0 -n=emulator --signer=emulator-account
 
 // set Specific Partner NFT series mintable
-flow transactions send ./cadence/transactions/ArleePartner/setSpecificPartnerNFTMintable.cdc Zeedz false -n=emulator --signer=emulator-account
+flow transactions send ./cadence/transactions/Voter/setSpecificPartnerNFTMintable.cdc Zeedz false -n=emulator --signer=emulator-account
 
 // set Partner Spliting Ratio (the input number is the ratio to be in partner's wallet)
-flow transactions send ./cadence/transactions/ArleePartner/setArleePartnerSplitRatio.cdc 1.0 -n=emulator --signer=emulator-account
+flow transactions send ./cadence/transactions/Voter/setVoterSplitRatio.cdc 1.0 -n=emulator --signer=emulator-account
 
 // set Marketplace Cut for onwarding minted NFTs
-flow transactions send ./cadence/transactions/ArleePartner/setMarketplaceCut.cdc 0.1 -n=emulator --signer=emulator-account
+flow transactions send ./cadence/transactions/Voter/setMarketplaceCut.cdc 0.1 -n=emulator --signer=emulator-account
 
 // set Partner Cut for onwarding minted NFTs
-flow transactions send ./cadence/transactions/ArleePartner/setPartnerCut.cdc Zeedz 0.2 -n=emulator --signer=emulator-account
+flow transactions send ./cadence/transactions/Voter/setPartnerCut.cdc Zeedz 0.2 -n=emulator --signer=emulator-account
 
+// admin Mint Voter NFT (for giveaways)
+flow transactions send ./cadence/transactions/Voter/adminMintVoterNFT.cdc Zeedz ZeedzPartner -n=emulator --signer=emulator-account
 
 // Mintable set true
-flow transactions send ./cadence/transactions/ArleePartner/setMintable.cdc true -n=emulator --signer=emulator-account
+flow transactions send ./cadence/transactions/Voter/setMintable.cdc true -n=emulator --signer=emulator-account
 
 // Mint
-flow transactions send ./cadence/transactions/mintPartnerNFT.cdc ZeedzNFT Zeedz -n=emulator --signer=emulator-account
+flow transactions send ./cadence/transactions/mintVoterNFT.cdc ZeedzNFT Zeedz -n=emulator --signer=emulator-account
 
 
 //Script Checks
-// Check a user if he / she has Partner NFT
-flow scripts execute ./cadence/scripts/ArleePartner/checkUserArleePartnerNFT.cdc 0xf8d6e0586b0a20c7 -n=emulator
+// Check a user if he / she has Voter NFT
+flow scripts execute ./cadence/scripts/Voter/checkUserVoterNFT.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
-// Get a users Partner NFT IDs 
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTIDs.cdc 0xf8d6e0586b0a20c7 -n=emulator
+// Get a users Voter NFT IDs 
+flow scripts execute ./cadence/scripts/Voter/getUserVoterNFTIDs.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
-// Return a reference to Partner NFT by Address and ID 
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFT.cdc 0xf8d6e0586b0a20c7 0 -n=emulator
+// Return a reference to Voter NFT by Address and ID 
+flow scripts execute ./cadence/scripts/Voter/getUserVoterNFT.cdc 0xf8d6e0586b0a20c7 0 -n=emulator
 
-// Get All Arlee Partner NFT reference under an account by Address
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTs.cdc 0xf8d6e0586b0a20c7 -n=emulator
+// Get All Voter NFT reference under an account by Address
+flow scripts execute ./cadence/scripts/Voter/getUserVoterNFTs.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
-// Get a Partner NFT name with IDs
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerNFTName.cdc 0 -n=emulator
+// Get a Voter NFT name with IDs
+flow scripts execute ./cadence/scripts/Voter/getVoterNFTName.cdc 0 -n=emulator
 
-// Get all Partner NFT names a user have 
-flow scripts execute ./cadence/scripts/ArleePartner/getUserArleePartnerNFTNames.cdc 0xf8d6e0586b0a20c7 -n=emulator
+// Get all Voter NFT names a user have 
+flow scripts execute ./cadence/scripts/Voter/getUserVoterNFTNames.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
-// Get the owner addr of an Partner NFT with the ID 
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerOwner.cdc 0 -n=emulator
+// Get the owner addr of an Voter NFT with the ID 
+flow scripts execute ./cadence/scripts/Voter/getVoterOwner.cdc 0 -n=emulator
 
-// Get All Minted Partner NFT Names 
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerAllNFTNames.cdc -n=emulator
+// Get All Minted Voter NFT Names 
+flow scripts execute ./cadence/scripts/Voter/getVoterAllNFTNames.cdc -n=emulator
 
-// Get Royalty for the onward minted Partner NFT
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerRoyalties.cdc -n=emulator
+// Get Royalty for the onward minted Voter NFT
+flow scripts execute ./cadence/scripts/Voter/getVoterRoyalties.cdc -n=emulator
 
-// Get Royalty for the onward minted Partner NFT by Partner Name
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerRoyaltiesByPartner.cdc Zeedz -n=emulator
+// Get Royalty for the onward minted Voter NFT by Partner Name
+flow scripts execute ./cadence/scripts/Voter/getVoterRoyaltiesByPartner.cdc Zeedz -n=emulator
 
 // Get Partner Split Ratio (the returned is going to the partner)
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerSplitRatio.cdc -n=emulator
+flow scripts execute ./cadence/scripts/Voter/getVoterSplitRatio.cdc -n=emulator
 
 // Check whether partner NFT is mintable now 
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerMintable.cdc -n=emulator
+flow scripts execute ./cadence/scripts/Voter/getVoterMintable.cdc -n=emulator
 
 // Check partner NFT mintprice 
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerMintPrice.cdc -n=emulator
+flow scripts execute ./cadence/scripts/Voter/getVoterMintPrice.cdc -n=emulator
 
 // Check Total Supply
-flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerTotalSupply.cdc -n=emulator
+flow scripts execute ./cadence/scripts/Voter/getVoterTotalSupply.cdc -n=emulator
 
 
 
@@ -90,27 +95,24 @@ flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerTotalSupply.c
 
 
 
-/* Setup Partner NFT env */
-// Add Whitelist accounts
-flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcct.cdc 0xf8d6e0586b0a20c7 2 -n=emulator --signer=emulator-account
+/* Setup Scene NFT env */
+// Add Free Mint accounts
+flow transactions send ./cadence/transactions/ArleeScene/addFreeMintAcct.cdc 0xf8d6e0586b0a20c7 2 -n=emulator --signer=emulator-account
 
-// Batch Add Whitelist accounts
-flow transactions send ./cadence/transactions/ArleeScene/batchAddWhitelistAcct.cdc "{0xf8d6e0586b0a20c7:1}" -n=emulator --signer=emulator-account
+// Batch Add Free Mint accounts
+flow transactions send ./cadence/transactions/ArleeScene/batchAddFreeMintAcct.cdc "{0xf8d6e0586b0a20c7:1}" -n=emulator --signer=emulator-account
 
-// Add Whitelist minting limit on top (so 3 in total)
-flow transactions send ./cadence/transactions/ArleeScene/addWhitelistAcctMint.cdc 0xf8d6e0586b0a20c7 1 -n=emulator --signer=emulator-account
+// Add free minting limit on top
+flow transactions send ./cadence/transactions/ArleeScene/addFreeMintAcctQuota.cdc 0xf8d6e0586b0a20c7 1 -n=emulator --signer=emulator-account
 
-// Set Whitelist minting limit (ignore the previous)
-flow transactions send ./cadence/transactions/ArleeScene/setWhitelistAcctMint.cdc 0xf8d6e0586b0a20c7 1 -n=emulator --signer=emulator-account
+// Set Free Minting limit (ignore the previous)
+flow transactions send ./cadence/transactions/ArleeScene/setFreeMintAcctQuota.cdc 0xf8d6e0586b0a20c7 1 -n=emulator --signer=emulator-account
 
-// Remove Whitelist
-flow transactions send ./cadence/transactions/ArleeScene/removeWhitelistAcct.cdc 0xf8d6e0586b0a20c7 -n=emulator --signer=emulator-account
+// Remove Free Mint Acct
+flow transactions send ./cadence/transactions/ArleeScene/removeFreeMintAcct.cdc 0xf8d6e0586b0a20c7 -n=emulator --signer=emulator-account
 
 // Set Mint Price 
 flow transactions send ./cadence/transactions/ArleeScene/setArleeSceneMintPrice.cdc 20.0 -n=emulator --signer=emulator-account
-
-// Set Whitelist Mint Price 
-flow transactions send ./cadence/transactions/ArleeScene/setArleeSceneWhitelistMintPrice.cdc 30.0 -n=emulator --signer=emulator-account
 
 // Set MarketplaceCut
 flow transactions send ./cadence/transactions/ArleeScene/setMarketplaceCut.cdc 0.61 -n=emulator --signer=emulator-account
@@ -118,13 +120,10 @@ flow transactions send ./cadence/transactions/ArleeScene/setMarketplaceCut.cdc 0
 // Set Mintable
 flow transactions send ./cadence/transactions/ArleeScene/setMintable.cdc true -n=emulator --signer=emulator-account
 
-// Set Whitelist Mintable
-flow transactions send ./cadence/transactions/ArleeScene/setWhitelistMintable.cdc true -n=emulator --signer=emulator-account
 
 
-
-// Mint Whitelist Scene
-flow transactions send ./cadence/transactions/mintSceneWhitelistNFT.cdc "1" "This is the first NFT" -n=emulator --signer=emulator-account
+// Mint Free Mint Scene
+flow transactions send ./cadence/transactions/mintSceneFreeMintNFT.cdc "1" "This is the first NFT" -n=emulator --signer=emulator-account
 
 // Mint Scene
 flow transactions send ./cadence/transactions/mintSceneNFT.cdc "2" "This is the first Public NFT" -n=emulator --signer=emulator-account
@@ -152,11 +151,11 @@ flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFT.cdc 0xf8d
 // Get All Arlee Scene NFT reference under an account by Address
 flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
-// Get Full Whitelist
-flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneWhitelist.cdc -n=emulator
+// Get Full Free Mint Accts
+flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneFreeMintAcct.cdc -n=emulator
 
-// Get Whitelisted account minting quota by Address
-flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneWhitelistQuota.cdc 0xf8d6e0586b0a20c7 -n=emulator
+// Get Free Mint account minting quota by Address
+flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneFreeMintQuota.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
 
 
@@ -164,14 +163,8 @@ flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneWhitelistQuot
 // Get Royalty detail for onward minted Scene NFTs
 flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneRoyalties.cdc -n=emulator
 
-// Check if ArleeScene NFT is mintable for Whitelist
-flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneWhitelistMintable.cdc -n=emulator
-
 // Check if ArleeScene NFT is publicly mintable
 flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneMintable.cdc -n=emulator
-
-// Get Whitelist Mint Price (in Flow)
-flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneWhitelistMintPrice.cdc -n=emulator
 
 // Get Public Mint Price (in Flow)
 flow scripts execute ./cadence/scripts/ArleeScene/getArleeSceneMintPrice.cdc -n=emulator

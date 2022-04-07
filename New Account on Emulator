@@ -1,0 +1,15 @@
+If you haven’t yet initialised Flow in your project, you’ll need to run flow init from your terminal within your project folder. This will create a flow.json file.
+Now you run the emulator by running flow emulator -v in your terminal.
+Open a new terminal window and follow these steps:
+Run flow keys generate` in the terminal. This will generate a private and public key pair. You’ll need these in a second.
+run flow accounts create --key YOUR_PUBLIC_KEY in the terminal. Paste your public key after —-key and this will create the account.
+In the terminal, you should now see your private key, public key, and the address for the new account. Update the accounts property of the flow.json file so that it looks like this:
+...
+"accounts": {
+"emulator-account": {...},
+"emulator-account-2": {
+"address": "ADDRESS_FROM_TERMINAL",
+"key":   "PRIVATE_KEY_FROM_TERMINAL"
+},
+And that’s all there is to it! If you would like to use this new account to sign transactions, append --signer emulator-account-2 to your terminal command!
+’Til next time :)

@@ -2,7 +2,7 @@
 
 /*  This contract defines ArleeScene NFTs.
     Users can mint this NFT with FLOW
-    Users owning the Partner NFT can mint an Advanced One.
+    Users owning the Voter NFT can mint an Advanced One.
     The fund received will be deposited to the Admin wallet.
 
     Will be incorporated to Arlee Contract 
@@ -18,7 +18,7 @@
     // Total number of ArleeScene NFT in existance
     pub var totalSupply: UInt64 
 
-    // Controls whether the PartnerNFT function
+    // Controls whether the VoterNFT function
     // Stores all minted Scenes { ID : CID }
     access(account) var mintedScenes : {UInt64 : String}
     // Stores all ownedScenes { Owner : Scene IDs }
@@ -27,9 +27,8 @@
     // Active Status
     pub var mintable: Bool
 
-    // Whitelist and Status
-    pub var whitelistMintable : Bool
-    access(account) var whitelistAcct : {Address : UInt64}
+    // Free Mint List and quota
+    access(account) var freeMintAcct : {Address : UInt64}
 
     // Events
     pub event ContractInitialized()
@@ -224,7 +223,7 @@
     }
 
     /* Query Function (Can also be done in Arlee Contract) */
-    // return true if the address holds the Partner NFT
+    // return true if the address holds the Scene NFT
     pub fun getArleeSceneIDs(addr: Address): [UInt64]? {
         let holderCap = getAccount(addr).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         
@@ -249,12 +248,12 @@
         return ArleeScene.mintedScenes
     }
 
-    pub fun getWhitelist(): {Address : UInt64} {
-        return ArleeScene.whitelistAcct
+    pub fun getFreeMintAcct(): {Address : UInt64} {
+        return ArleeScene.freeMintAcct
     }
 
-    pub fun getWhitelistQuota(addr: Address) : UInt64? {
-        return ArleeScene.whitelistAcct[addr]
+    pub fun getFreeMintQuota(addr: Address) : UInt64? {
+        return ArleeScene.freeMintAcct[addr]
     }
 
     pub fun getOwner(id: UInt64) : Address? {
@@ -288,68 +287,43 @@
         recipient.deposit(token: <- newNFT) 
     }
 
-    access(account) fun mintSceneWhitelistNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, description:String){
+    access(account) fun addFreeMintAcct(addr: Address, mint:UInt64) {
         pre{
-            ArleeScene.whitelistMintable : "Whitelist minting is not available at the moment."
+            ArleeScene.freeMintAcct[addr] == nil : "This address is already registered in Free Mint list, please use other functions for altering"
         }
-        // further check if the recipient is in whitelist
-        assert(recipient.owner != nil , message:"Cannot pass in a Collection reference with no owner")
-        let ownerAddr = recipient.owner!.address
-        assert(ArleeScene.whitelistAcct[ownerAddr] != nil, message: "You are not in the whitelist")
-        assert(ArleeScene.whitelistAcct[ownerAddr]! > 0, message: "You already ran out of mintable quotas")
-
-        let royalties = ArleeScene.getRoyalty()
-        let newNFT <- create ArleeScene.NFT(cid: cid, description: description, creator: ownerAddr, royalties:royalties)
-        
-        // minus 1 in the whitelist mintable quota
-        ArleeScene.whitelistAcct[ownerAddr] = ArleeScene.whitelistAcct[ownerAddr]! - 1
-
-        ArleeScene.mintedScenes[newNFT.id] = cid
-        emit Created(id:newNFT.id, cid:cid, royalties:royalties, creator: ownerAddr)
-        recipient.deposit(token: <- newNFT) 
+        ArleeScene.freeMintAcct[addr] = mint
     }
 
-    access(account) fun addWhitelistAcct(addr: Address, mint:UInt64) {
-        pre{
-            ArleeScene.whitelistAcct[addr] == nil : "This address is already given Whitelist, please use other functions for altering"
-        }
-        ArleeScene.whitelistAcct[addr] = mint
-    }
-
-    access(account) fun batchAddWhitelistAcct(list:{Address : UInt64}) {
+    access(account) fun batchAddFreeMintAcct(list:{Address : UInt64}) {
         for addr in list.keys {
-            ArleeScene.addWhitelistAcct(addr: addr, mint:list[addr]!)
+            ArleeScene.addFreeMintAcct(addr: addr, mint:list[addr]!)
         }
     }
 
-    access(account) fun removeWhitelistAcct(addr: Address) {
+    access(account) fun removeFreeMintAcct(addr: Address) {
         pre{
-            ArleeScene.whitelistAcct[addr] != nil : "This address is not given Whitelist"
+            ArleeScene.freeMintAcct[addr] != nil : "This address is not given Free Mint Quota."
         }
-        ArleeScene.whitelistAcct.remove(key: addr)
+        ArleeScene.freeMintAcct.remove(key: addr)
     }
 
-    access(account) fun setWhitelistAcctMint(addr: Address, mint: UInt64) {
+    access(account) fun setFreeMintAcctQuota(addr: Address, mint: UInt64) {
         pre{
             mint > 0 : "Minting limit cannot be smaller than 1"
-            ArleeScene.whitelistAcct[addr] != nil : "This address is not given Whitelist"
+            ArleeScene.freeMintAcct[addr] != nil : "This address is not given Free Mint Quota"
         }
-        ArleeScene.whitelistAcct[addr] = mint
+        ArleeScene.freeMintAcct[addr] = mint
     }
 
-    access(account) fun addWhitelistAcctMint(addr: Address, additionalMint: UInt64) {
+    access(account) fun addFreeMintAcctQuota(addr: Address, additionalMint: UInt64) {
         pre{
-            ArleeScene.whitelistAcct[addr] != nil : "This address is not given Whitelist"
+            ArleeScene.freeMintAcct[addr] != nil : "This address is not given Free Mint Quota"
         }
-        ArleeScene.whitelistAcct[addr] = additionalMint + ArleeScene.whitelistAcct[addr]!
+        ArleeScene.freeMintAcct[addr] = additionalMint + ArleeScene.freeMintAcct[addr]!
     }
 
     access(account) fun setMintable(mintable: Bool) {
         ArleeScene.mintable = mintable
-    }
-
-    access(account) fun setWhitelistMintable(mintable: Bool) {
-        ArleeScene.whitelistMintable = mintable
     }
 
     init(){
@@ -360,8 +334,7 @@
 
         self.mintable = false
         
-        self.whitelistMintable = false
-        self.whitelistAcct = {}
+        self.freeMintAcct = {}
 
         // Paths
         self.CollectionStoragePath = /storage/ArleeScene
@@ -371,9 +344,11 @@
         self.marketplaceCut = 0.05
         self.arlequinWallet = self.account.address
 
-        // Setup Account
+        // Setup Account 
+        
         self.account.save(<- ArleeScene.createEmptyCollection() , to: ArleeScene.CollectionStoragePath)
         self.account.link<&ArleeScene.Collection{ArleeScene.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(ArleeScene.CollectionPublicPath, target:ArleeScene.CollectionStoragePath)
+        
     }
         
  }

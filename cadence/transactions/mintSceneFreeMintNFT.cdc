@@ -3,8 +3,12 @@ import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
 import Arlequin from "../contracts/Arlequin.cdc"
 import Voter from "../contracts/Voter.cdc"
 import ArleeScene from "../contracts/ArleeScene.cdc"
+import FungibleToken from "../contracts/FungibleToken.cdc"
+import FlowToken from "../contracts/FlowToken.cdc"
 
-transaction() {
+transaction(cid: String, description: String) {
+
+    let buyerAddr : Address
 
     prepare(acct: AuthAccount) {
         //acct setup
@@ -19,10 +23,13 @@ transaction() {
             acct.link<&ArleeScene.Collection{ArleeScene.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>
                 (ArleeScene.CollectionPublicPath, target:ArleeScene.CollectionStoragePath)
         }
+
+        self.buyerAddr = acct.address
+
     }
 
     execute {
-
+        Arlequin.mintSceneFreeMintNFT(buyer: self.buyerAddr, cid: cid, description: description)
     }
 
 }
