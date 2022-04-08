@@ -116,8 +116,8 @@ pub contract Arlequin {
 
     pub resource ArleePartnerAdmin {
         // ArleePartner NFT Admin Functinos
-        pub fun addPartnerRoyaltyCut(creditor: String, addr: Address, cut: UFix64 ) {
-            ArleePartner.addPartnerRoyaltyCut(creditor: creditor, addr: addr, cut: cut )
+        pub fun addPartner(creditor: String, addr: Address, cut: UFix64 ) {
+            ArleePartner.addPartner(creditor: creditor, addr: addr, cut: cut )
         }
 
         pub fun setMarketplaceCut(cut: UFix64) {
@@ -149,13 +149,13 @@ pub contract Arlequin {
         }
 
         // Add flexibility to giveaway : an Admin mint function.
-        pub fun adminMintArleePartnerNFT(partner: String, name:String){
+        pub fun adminMintArleePartnerNFT(partner: String){
             // get all merchant receiving vault references 
             let recipientCap = getAccount(Arlequin.account.address).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
             let recipient = recipientCap.borrow() ?? panic("Cannot borrow Arlequin's Collection Public")
 
             // deposit
-            ArleePartner.adminMintArleePartnerNFT(recipient:recipient, partner: partner, name:name)
+            ArleePartner.adminMintArleePartnerNFT(recipient:recipient, partner: partner)
         }
     }
 
@@ -199,7 +199,7 @@ pub contract Arlequin {
     }
 
     /* Public Minting for ArleePartnerNFT */
-    pub fun mintArleePartnerNFT(buyer: Address, name: String, partner: String, paymentVault:  @FungibleToken.Vault) {
+    pub fun mintArleePartnerNFT(buyer: Address, partner: String, paymentVault:  @FungibleToken.Vault) {
         pre{
             paymentVault.balance >= Arlequin.arleepartnerNFTPrice: "Insufficient payment amount."
             paymentVault.getType() == Type<@FlowToken.Vault>(): "payment type not in FlowToken.Vault."
@@ -223,7 +223,7 @@ pub contract Arlequin {
         arlequinVault.deposit(from: <- paymentVault)
         partnerVault.deposit(from: <- toPartnerVault)
 
-        ArleePartner.mintArleePartnerNFT(recipient:recipient, partner: partner, name:name)
+        ArleePartner.mintArleePartnerNFT(recipient:recipient, partner: partner)
     }
 
     /* Public Minting for ArleeSceneNFT */

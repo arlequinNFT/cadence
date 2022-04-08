@@ -10,7 +10,7 @@ transaction(creditor: String, addr: Address, cut: UFix64) {
     }
 
     execute {
-        self.arleepartnerAdmin.addPartnerRoyaltyCut(creditor: creditor, addr: addr, cut: cut)
+        self.arleepartnerAdmin.addPartner(creditor: creditor, addr: addr, cut: cut)
     }
 
 }

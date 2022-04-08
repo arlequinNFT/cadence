@@ -19,7 +19,7 @@ flow transactions send ./cadence/transactions/ArleePartner/addPartnerRoyaltyCut.
 
 
 // Mint
-flow transactions send ./cadence/transactions/mintArleePartnerNFT.cdc ZeedzNFT Zeedz -n=testnet --signer=testnet-account-2
+flow transactions send ./cadence/transactions/mintArleePartnerNFT.cdc Zeedz -n=testnet --signer=testnet-account-2
 
 
 //Script Checks

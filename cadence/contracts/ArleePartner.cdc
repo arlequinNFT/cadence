@@ -35,6 +35,9 @@
     pub event Deposit(id: UInt64, to: Address?)
     pub event Created(id: UInt64, royalties: [Royalty])
 
+    pub event PartnerRoyaltyAdded(creditor:String, wallet:Address, cut: UFix64)
+    pub event RoyaltyUpdated(creditor:String, previousCut:UFix64, newCut: UFix64)
+
     // Paths
     pub let CollectionStoragePath : StoragePath
     pub let CollectionPublicPath : PublicPath
@@ -312,7 +315,7 @@
 
     /* Admin Function */
     // Add a new recipient as a partner to receive royalty cut
-    access(account) fun addPartnerRoyaltyCut(creditor: String, addr: Address, cut: UFix64 ) {
+    access(account) fun addPartner(creditor: String, addr: Address, cut: UFix64 ) {
         // check if this creditor already exist
         assert(!ArleePartner.allRoyalties.containsKey(creditor), message:"This Royalty already exist")  
 
@@ -322,12 +325,17 @@
 
         // add the partner name to the mintableArleePartnerNFTList so by default it is mintable.
         ArleePartner.mintableArleePartnerNFTList[creditor] = true
+
+        // emit event
+        emit PartnerRoyaltyAdded(creditor:creditor , wallet:addr , cut:cut)
     }
 
     access(account) fun setMarketplaceCut(cut: UFix64) {
         let partner = "Arlequin"
         let royaltyRed = &ArleePartner.allRoyalties[partner] as! &Royalty
+        let oldRoyalty = royaltyRed.cut
         royaltyRed.cut = cut
+        emit RoyaltyUpdated(creditor:"Arlequin", previousCut:oldRoyalty, newCut: cut)
     }
 
     access(account) fun setPartnerCut(partner: String, cut: UFix64) {
@@ -335,7 +343,9 @@
             ArleePartner.allRoyalties.containsKey(partner) : "This creditor does not exist"
         }
         let royaltyRed = &ArleePartner.allRoyalties[partner]  as! &Royalty
+        let oldRoyalty = royaltyRed.cut
         royaltyRed.cut = cut
+        emit RoyaltyUpdated(creditor:partner, previousCut:oldRoyalty, newCut: cut)
     }
 
     access(account) fun setMintable(mintable: Bool) {
@@ -349,7 +359,7 @@
         ArleePartner.mintableArleePartnerNFTList[partner] = mintable
     }
 
-    access(account) fun mintArleePartnerNFT(recipient:&{ArleePartner.CollectionPublic}, partner: String, name:String) {
+    access(account) fun mintArleePartnerNFT(recipient:&{ArleePartner.CollectionPublic}, partner: String) {
         pre{
             ArleePartner.mintable : "Public minting is not available at the moment."
         }
@@ -362,7 +372,7 @@
         assert(ArleePartner.mintableArleePartnerNFTList[partner]!, message: "This partner NFT minting is disabled. Partner :".concat(partner))
 
         let arlequinRoyalty = overallRoyalties["Arlequin"]!
-        let newNFT <- create ArleePartner.NFT(name: name, royalties:[arlequinRoyalty,partnerRoyalty])
+        let newNFT <- create ArleePartner.NFT(name: partner, royalties:[arlequinRoyalty,partnerRoyalty])
         
         ArleePartner.mintedArleePartnerNFTs[newNFT.id] = newNFT.name
 
@@ -370,7 +380,7 @@
         recipient.deposit(token: <- newNFT) 
     }
 
-    access(account) fun adminMintArleePartnerNFT(recipient:&{ArleePartner.CollectionPublic}, partner: String, name:String) {
+    access(account) fun adminMintArleePartnerNFT(recipient:&{ArleePartner.CollectionPublic}, partner: String) {
 
         let overallRoyalties = ArleePartner.getRoyalties()
         let partnerRoyalty = overallRoyalties[partner] ?? panic("Cannot find this partner royalty : ".concat(partner))
@@ -379,7 +389,7 @@
         assert(ArleePartner.mintableArleePartnerNFTList[partner] != nil, message: "Cannot find this partner : ".concat(partner))
 
         let arlequinRoyalty = overallRoyalties["Arlequin"]!
-        let newNFT <- create ArleePartner.NFT(name: name, royalties:[arlequinRoyalty,partnerRoyalty])
+        let newNFT <- create ArleePartner.NFT(name: partner, royalties:[arlequinRoyalty,partnerRoyalty])
         
         ArleePartner.mintedArleePartnerNFTs[newNFT.id] = newNFT.name
 

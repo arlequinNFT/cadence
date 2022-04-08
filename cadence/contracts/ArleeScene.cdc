@@ -36,6 +36,11 @@
     pub event Deposit(id: UInt64, to: Address?)
     pub event Created(id: UInt64, cid:String, royalties: [Royalty], creator:Address)
 
+    pub event FreeMintListAcctUpdated(address: Address, mint:UInt64)
+    pub event FreeMintListAcctRemoved(address: Address)
+
+    pub event MarketplaceCutUpdate(oldCut:UFix64, newCut:UFix64)
+
     // Paths
     pub let CollectionStoragePath : StoragePath
     pub let CollectionPublicPath : PublicPath
@@ -268,7 +273,10 @@
 
     /* Admin Function */
     access(account) fun setMarketplaceCut(cut: UFix64) {
+        let oldCut = ArleeScene.marketplaceCut
         ArleeScene.marketplaceCut = cut
+
+        emit MarketplaceCutUpdate(oldCut:oldCut, newCut:cut)
     }
 
     access(account) fun mintSceneNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, description:String) {
@@ -292,6 +300,8 @@
             ArleeScene.freeMintAcct[addr] == nil : "This address is already registered in Free Mint list, please use other functions for altering"
         }
         ArleeScene.freeMintAcct[addr] = mint
+
+        emit FreeMintListAcctUpdated(address: addr, mint:mint)
     }
 
     access(account) fun batchAddFreeMintAcct(list:{Address : UInt64}) {
@@ -309,6 +319,8 @@
             ArleeScene.freeMintAcct[addr] != nil : "This address is not given Free Mint Quota."
         }
         ArleeScene.freeMintAcct.remove(key: addr)
+
+        emit FreeMintListAcctRemoved(address: addr)
     }
 
     access(account) fun setFreeMintAcctQuota(addr: Address, mint: UInt64) {
@@ -317,6 +329,8 @@
             ArleeScene.freeMintAcct[addr] != nil : "This address is not given Free Mint Quota"
         }
         ArleeScene.freeMintAcct[addr] = mint
+
+        emit FreeMintListAcctUpdated(address: addr, mint:mint)
     }
 
     access(account) fun addFreeMintAcctQuota(addr: Address, additionalMint: UInt64) {
@@ -324,6 +338,8 @@
             ArleeScene.freeMintAcct[addr] != nil : "This address is not given Free Mint Quota"
         }
         ArleeScene.freeMintAcct[addr] = additionalMint + ArleeScene.freeMintAcct[addr]!
+
+        emit FreeMintListAcctUpdated(address: addr, mint:ArleeScene.freeMintAcct[addr]!)
     }
 
     access(account) fun setMintable(mintable: Bool) {

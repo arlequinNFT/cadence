@@ -1,6 +1,6 @@
 import Arlequin from "../../contracts/Arlequin.cdc"
 
-transaction(partner: String, name: String) {
+transaction(partner: String) {
 
     let arleepartnerAdmin : &Arlequin.ArleePartnerAdmin
 
@@ -10,7 +10,7 @@ transaction(partner: String, name: String) {
     }
 
     execute {
-        self.arleepartnerAdmin.adminMintArleePartnerNFT(partner: partner, name:name)
+        self.arleepartnerAdmin.adminMintArleePartnerNFT(partner: partner)
     }
 
 }
