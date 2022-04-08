@@ -36,6 +36,7 @@
     pub event Created(id: UInt64, royalties: [Royalty])
 
     pub event PartnerRoyaltyAdded(creditor:String, wallet:Address, cut: UFix64)
+    pub event PartnerRoyaltyRemoved(creditor:String)
     pub event RoyaltyUpdated(creditor:String, previousCut:UFix64, newCut: UFix64)
 
     // Paths
@@ -328,6 +329,15 @@
 
         // emit event
         emit PartnerRoyaltyAdded(creditor:creditor , wallet:addr , cut:cut)
+    }
+
+    access(account) fun removePartner(creditor: String ) {
+        ArleePartner.allRoyalties.remove(key: creditor) ?? panic("This Royalty does not exist")
+
+        ArleePartner.mintableArleePartnerNFTList.remove(key: creditor) ?? panic("This Partner does not exist")
+
+        emit PartnerRoyaltyRemoved(creditor:creditor)
+
     }
 
     access(account) fun setMarketplaceCut(cut: UFix64) {

@@ -14,8 +14,11 @@ flow scripts execute ./cadence/scripts/checkAccountInitialized.cdc 0xf8d6e0586b0
 flow scripts execute ./cadence/scripts/checkFlowBalance.cdc 0xf8d6e0586b0a20c7 -n=emulator
 
 /* Setup ArleePartner NFT env */
-// setup ArleePartner NFT Royalty, cut and ratio
+// setup ArleePartner NFT Royalty, cut 
 flow transactions send ./cadence/transactions/ArleePartner/addPartner.cdc Zeedz 0xf8d6e0586b0a20c7 0.05 -n=emulator --signer=emulator-account
+
+// Remove ArleePartner NFT Royalty, cut 
+flow transactions send ./cadence/transactions/ArleePartner/removePartner.cdc Zeedz -n=emulator --signer=emulator-account
 
 // just for trying, already set in contract init
 // set Mint Price

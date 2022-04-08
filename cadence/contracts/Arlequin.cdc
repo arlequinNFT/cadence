@@ -120,6 +120,10 @@ pub contract Arlequin {
             ArleePartner.addPartner(creditor: creditor, addr: addr, cut: cut )
         }
 
+        pub fun removePartner(creditor: String) {
+            ArleePartner.removePartner(creditor: creditor)
+        }
+
         pub fun setMarketplaceCut(cut: UFix64) {
             ArleePartner.setMarketplaceCut(cut: cut)
         }
