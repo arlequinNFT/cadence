@@ -8,9 +8,10 @@ import FlowToken from "../contracts/FlowToken.cdc"
 
 transaction(cid: String, description: String) {
 
-    let buyerAddr : Address
+    let adminRef: &Arlequin.ArleeSceneAdmin
+    let buyerAddr: Address
 
-    prepare(acct: AuthAccount) {
+    prepare(acct: AuthAccount, adminAcct: AuthAccount) {
         //acct setup
         if acct.borrow<&ArleePartner.Collection>(from: ArleePartner.CollectionStoragePath) == nil {
             acct.save(<- ArleePartner.createEmptyCollection(), to: ArleePartner.CollectionStoragePath)
@@ -25,11 +26,11 @@ transaction(cid: String, description: String) {
         }
 
         self.buyerAddr = acct.address
-
+        self.adminRef = adminAcct.borrow<&Arlequin.ArleeSceneAdmin>(from: Arlequin.ArleeSceneAdminStoragePath) ?? panic("Couldn't borrow ArleeSceneAdmin resource")
     }
 
     execute {
-        Arlequin.mintSceneFreeMintNFT(buyer: self.buyerAddr, cid: cid, description: description)
+        Arlequin.mintSceneFreeMintNFT(buyer: self.buyerAddr, cid: cid, description: description, adminRef: self.adminRef)
     }
 
 }

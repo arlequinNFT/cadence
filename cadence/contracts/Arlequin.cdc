@@ -231,7 +231,7 @@ pub contract Arlequin {
     }
 
     /* Public Minting for ArleeSceneNFT */
-    pub fun mintSceneNFT(buyer: Address, cid: String, description:String, paymentVault:  @FungibleToken.Vault) {
+    pub fun mintSceneNFT(buyer: Address, cid: String, description:String, paymentVault:  @FungibleToken.Vault, adminRef: &ArleeSceneAdmin) {
         pre{
             paymentVault.balance >= Arlequin.sceneNFTPrice: "Insufficient payment amount."
             paymentVault.getType() == Type<@FlowToken.Vault>(): "payment type not in FlowToken.Vault."
@@ -250,7 +250,7 @@ pub contract Arlequin {
     }
 
     /* Free Minting for ArleeSceneNFT */
-    pub fun mintSceneFreeMintNFT(buyer: Address, cid: String, description:String) {
+    pub fun mintSceneFreeMintNFT(buyer: Address, cid: String, description:String, adminRef: &ArleeSceneAdmin) {
         pre{
             Arlequin.getArleeSceneFreeMintQuota(addr: buyer) != nil : "You are not given free mint quotas"
             Arlequin.getArleeSceneFreeMintQuota(addr: buyer)! > 0 : "You ran out of free mint quotas"

@@ -8,9 +8,10 @@ import FlowToken from "../contracts/FlowToken.cdc"
 
 transaction(cid: String, description: String) {
 
+    let adminRef: &Arlequin.ArleeSceneAdmin
     let payerVaultRef : &FlowToken.Vault
 
-    prepare(acct: AuthAccount) {
+    prepare(acct: AuthAccount, adminAcct: AuthAccount) {
         //acct setup
         if acct.borrow<&ArleePartner.Collection>(from: ArleePartner.CollectionStoragePath) == nil {
             acct.save(<- ArleePartner.createEmptyCollection(), to: ArleePartner.CollectionStoragePath)
@@ -28,6 +29,7 @@ transaction(cid: String, description: String) {
         self.payerVaultRef = acct.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault) 
             ?? panic("Cannot find the flow token vault")
 
+        self.adminRef = adminAcct.borrow<&Arlequin.ArleeSceneAdmin>(from: Arlequin.ArleeSceneAdminStoragePath) ?? panic("Couldn't borrow ArleeSceneAdmin resource")
     }
 
     execute {
@@ -38,7 +40,7 @@ transaction(cid: String, description: String) {
         let paymentVault <- self.payerVaultRef.withdraw(amount: price )
         let buyerAddr = self.payerVaultRef.owner!.address
 
-        Arlequin.mintSceneNFT(buyer: buyerAddr, cid: cid, description: description, paymentVault: <- paymentVault)
+        Arlequin.mintSceneNFT(buyer: buyerAddr, cid: cid, description: description, paymentVault: <- paymentVault, adminRef: self.adminRef)
 
     }
 
