@@ -9,6 +9,7 @@ pub contract Arlequin {
     
     pub var arleepartnerNFTPrice : UFix64 
     pub var sceneNFTPrice : UFix64
+    pub var arleeSceneUpgradePrice: UFix64
 
     // This is the ratio to partners in arleepartnerNFT sales, ratio to Arlequin will be (1 - partnerSplitRatio)
     pub var partnerSplitRatio : UFix64
@@ -112,6 +113,9 @@ pub contract Arlequin {
         return Arlequin.sceneNFTPrice
     }
 
+    pub fun getArleeSceneUpgradePrice() : UFix64 {
+        return Arlequin.arleeSceneUpgradePrice
+    }
 
 
     pub resource ArleePartnerAdmin {
@@ -200,6 +204,10 @@ pub contract Arlequin {
             Arlequin.sceneNFTPrice = price
         }
 
+        pub fun setArleeSceneUpgradePrice(price: UFix64) {
+            Arlequin.arleeSceneUpgradePrice = price
+        }
+
     }
 
     /* Public Minting for ArleePartnerNFT */
@@ -265,9 +273,24 @@ pub contract Arlequin {
         ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, description:description)
     }
 
+    /* Upgrade Arlee */
+    pub fun updateArleeCID(arlee: @NonFungibleToken.NFT, paymentVault: @FungibleToken.Vault, cid: String, adminRef: &ArleeSceneAdmin): @NonFungibleToken.NFT {
+        pre {
+            arlee.getType() == Type<@ArleeScene.NFT>(): "Incorrect NFT type provided!"
+            paymentVault.balance >= Arlequin.arleeSceneUpgradePrice: "Insufficient funds provided to upgrade Arlee"
+            paymentVault.getType() == Type<@FlowToken.Vault>(): "Funds provided are not Flow Tokens!"
+        }
+        let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receving vault reference")
+        arlequinVault.deposit(from: <- paymentVault)
+
+        arlee.updateCID(newCID: cid)
+        return <- arlee
+    }
+
     init(){
         self.arleepartnerNFTPrice = 10.0
         self.sceneNFTPrice = 10.0
+        self.arleeSceneUpgradePrice = 9.0
 
         self.partnerSplitRatio = 1.0
 
