@@ -36,6 +36,8 @@
     pub event Deposit(id: UInt64, to: Address?)
     pub event Created(id: UInt64, cid:String, royalties: [Royalty], creator:Address)
 
+    pub event ArleeCIDUpdated(id: UInt64, oldCID:String, newCID:String)
+    
     pub event FreeMintListAcctUpdated(address: Address, mint:UInt64)
     pub event FreeMintListAcctRemoved(address: Address)
 
@@ -65,7 +67,7 @@
     // ArleeScene NFT (includes the CID, description, creator, royalty)
     pub resource NFT : NonFungibleToken.INFT, MetadataViews.Resolver {
         pub let id: UInt64
-        pub let cid: String
+        pub var cid: String
         pub let description: String
         pub let creator: Address
         access(contract) let royalties: [Royalty]
@@ -80,6 +82,13 @@
             // update totalSupply
             ArleeScene.totalSupply = ArleeScene.totalSupply +1
         }
+
+        // function for upgrading Arlee by replacing CID
+        access(account) fun updateCID(newCID: String) {
+            let oldCID = self.cid
+            self.cid = newCID
+            emit ArleeCIDUpdated(id: self.id, oldCID: oldCID, newCID: newCID)
+        } 
 
         // Function to return royalty
         pub fun getRoyalties(): [Royalty] {
