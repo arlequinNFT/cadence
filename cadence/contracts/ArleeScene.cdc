@@ -241,7 +241,7 @@
     pub fun getArleeSceneIDs(addr: Address): [UInt64]? {
         let holderCap = getAccount(addr).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         
-        if holderCap.borrow == nil {
+        if holderCap.borrow() == nil {
             return nil
         }
         

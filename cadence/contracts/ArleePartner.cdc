@@ -226,7 +226,7 @@
     pub fun checkArleePartnerNFT(addr: Address): Bool {
         let holderCap = getAccount(addr).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
         
-        if holderCap.borrow == nil {
+        if holderCap.borrow() == nil {
             return false
         }
         
@@ -241,7 +241,7 @@
     pub fun getArleePartnerNFTIDs(addr: Address): [UInt64]? {
         let holderCap = getAccount(addr).getCapability<&ArleePartner.Collection{ArleePartner.CollectionPublic}>(ArleePartner.CollectionPublicPath)
         
-        if holderCap.borrow == nil {
+        if holderCap.borrow() == nil {
             return nil
         }
         
