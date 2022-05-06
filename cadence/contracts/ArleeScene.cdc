@@ -364,6 +364,13 @@
         ArleeScene.mintable = mintable
     }
 
+    /* Contract functions for updating NFT metadata */
+    access(account) fun updateCID(arleeSceneNFT: @NonFungibleToken.NFT, newCID: String): @NonFungibleToken.NFT {
+        let nftRef = &arleeSceneNFT as auth &NonFungibleToken.NFT
+        let ref = nftRef as! &ArleeScene.NFT
+        ref.updateCID(newCID: newCID)
+        return <- arleeSceneNFT
+    }
 
     access(account) fun updateMetadata(arleeSceneNFT: @NonFungibleToken.NFT, key: String, value: String): @NonFungibleToken.NFT {
         let nftRef = &arleeSceneNFT as auth &NonFungibleToken.NFT

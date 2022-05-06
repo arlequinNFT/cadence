@@ -319,8 +319,7 @@ pub contract Arlequin {
         let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receving vault reference")
         arlequinVault.deposit(from: <- paymentVault)
 
-        arlee.updateCID(newCID: cid)
-        return <- arlee
+        return <- ArleeScene.updateCID(arleeSceneNFT: <- arlee, newCID: cid)
     }
 
     init(){
