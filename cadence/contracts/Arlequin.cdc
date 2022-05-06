@@ -206,6 +206,13 @@ pub contract Arlequin {
         }
 
         // for minting
+        pub fun mintSceneNFT(buyer: Address, cid: String, description:String, metadata: {String: String}) {
+            let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
+            let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
+
+            ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, description:description, metadata: metadata)
+        }
+
         pub fun setArleeSceneMintPrice(price: UFix64) {
             Arlequin.sceneNFTPrice = price
         }
