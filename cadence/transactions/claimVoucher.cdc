@@ -24,7 +24,7 @@ transaction(voucherID: UInt64) {
     }
 
     execute {
-        Arlequin.redeemVoucher(buyer: self.voucher.owner!.address, voucher: <- self.voucher, adminRef: self.adminRef)
+        Arlequin.redeemVoucher(address: self.voucher.owner!.address, voucher: <- self.voucher, adminRef: self.adminRef)
     }
 
 }
