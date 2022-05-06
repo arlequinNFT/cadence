@@ -20,6 +20,9 @@ pub contract Arlequin {
     pub let ArleePartnerAdminStoragePath : StoragePath
     pub let ArleeSceneAdminStoragePath : StoragePath
 
+    // Events
+    pub event VoucherClaimed(address: Address, voucherID: UInt64)
+
     // Query Functions
     /* For ArleePartner */
     pub fun checkArleePartnerNFT(addr: Address): Bool {
@@ -314,6 +317,14 @@ pub contract Arlequin {
         ArleeScene.mintSceneNFT(recipient: recipientRef, cid: cid, description: description, metadata: metadata)
         destroy voucher   
     }
+
+    /* Redeem Voucher - general purpose voucher consumption function, backend can proceed to mint once voucher is redeemed */
+    pub fun redeemVoucher(address: Address, voucher: @NonFungibleToken.NFT, adminRef: &ArleeSceneAdmin) {
+        pre {
+            voucher.getType() == Type<@ArleeSceneVoucher.NFT>(): "Provided NFT is not an ArleeSceneVoucher!"
+        }
+        emit VoucherClaimed(address: address, voucherID: voucher.id)
+        destroy voucher
     }
 
     /* Upgrade Arlee */
