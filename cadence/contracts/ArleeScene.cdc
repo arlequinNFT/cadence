@@ -37,6 +37,7 @@
     pub event Created(id: UInt64, cid:String, royalties: [Royalty], creator:Address)
 
     pub event ArleeCIDUpdated(id: UInt64, oldCID:String, newCID:String)
+    pub event MetadataUpdated(key: String, value: String, oldValue: String?)
     
     pub event FreeMintListAcctUpdated(address: Address, mint:UInt64)
     pub event FreeMintListAcctRemoved(address: Address)
@@ -90,7 +91,13 @@
             let oldCID = self.cid
             self.cid = newCID
             emit ArleeCIDUpdated(id: self.id, oldCID: oldCID, newCID: newCID)
-        } 
+        }
+
+        access(account) fun updateMetadata(key: String, value: String) {
+            let oldValue = self.metadata[key]
+            self.metadata[key] = value
+            emit MetadataUpdated(key: key, value: value, oldValue: oldValue)
+        }
 
         // Function to return royalty
         pub fun getRoyalties(): [Royalty] {
@@ -355,6 +362,14 @@
 
     access(account) fun setMintable(mintable: Bool) {
         ArleeScene.mintable = mintable
+    }
+
+
+    access(account) fun updateMetadata(arleeSceneNFT: @NonFungibleToken.NFT, key: String, value: String): @NonFungibleToken.NFT {
+        let nftRef = &arleeSceneNFT as auth &NonFungibleToken.NFT
+        let ref = nftRef as! &ArleeScene.NFT
+        ref.updateMetadata(key: key, value: value)
+        return <- arleeSceneNFT
     }
 
     init(){
