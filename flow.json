@@ -38,6 +38,7 @@
     },
     "ArleePartner": "./cadence/contracts/ArleePartner.cdc",
     "ArleeScene": "./cadence/contracts/ArleeScene.cdc",
+    "ArleeSceneVoucher": "./cadence/contracts/ArleeSceneVoucher.cdc",
     "Arlequin": "./cadence/contracts/Arlequin.cdc"
   },
   "networks": {
@@ -64,7 +65,7 @@
   },
   "deployments": {
     "testnet": {
-      "testnet-account": ["ArleePartner", "ArleeScene", "Arlequin"]
+      "testnet-account": ["ArleePartner", "ArleeScene", "ArleeSceneVoucher", "Arlequin"]
     },
     "emulator": {
       "emulator-account": [
@@ -72,6 +73,7 @@
         "MetadataViews",
         "ArleePartner",
         "ArleeScene",
+        "ArleeSceneVoucher",
         "Arlequin"
       ]
     }

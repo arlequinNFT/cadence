@@ -70,14 +70,16 @@
         pub var cid: String
         pub let description: String
         pub let creator: Address
+        pub let metadata: {String: String}
         access(contract) let royalties: [Royalty]
 
-        init(cid: String, description:String, creator: Address, royalties:[Royalty]){
+        init(cid: String, description: String, creator: Address, royalties:[Royalty], metadata: {String: String}){
             self.id = ArleeScene.totalSupply
             self.cid = cid
             self.description = description
             self.creator = creator
             self.royalties = royalties
+            self.metadata = metadata
 
             // update totalSupply
             ArleeScene.totalSupply = ArleeScene.totalSupply +1
@@ -288,7 +290,7 @@
         emit MarketplaceCutUpdate(oldCut:oldCut, newCut:cut)
     }
 
-    access(account) fun mintSceneNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, description:String) {
+    access(account) fun mintSceneNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, description:String, metadata: {String: String}) {
         pre{
             ArleeScene.mintable : "Public minting is not available at the moment."
         }
@@ -297,7 +299,7 @@
         let ownerAddr = recipient.owner!.address
 
         let royalties = ArleeScene.getRoyalty()
-        let newNFT <- create ArleeScene.NFT(cid: cid, description: description, creator: ownerAddr, royalties:royalties)
+        let newNFT <- create ArleeScene.NFT(cid: cid, description: description, creator: ownerAddr, royalties:royalties, metadata: metadata)
         
         ArleeScene.mintedScenes[newNFT.id] = cid
         emit Created(id:newNFT.id, cid:cid, royalties:royalties, creator: ownerAddr)
