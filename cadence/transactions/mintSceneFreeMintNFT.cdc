@@ -6,7 +6,7 @@ import ArleeScene from "../contracts/ArleeScene.cdc"
 import FungibleToken from "../contracts/FungibleToken.cdc"
 import FlowToken from "../contracts/FlowToken.cdc"
 
-transaction(cid: String, description: String) {
+transaction(cid: String, metadata: {String: String}) {
 
     let adminRef: &Arlequin.ArleeSceneAdmin
     let buyerAddr: Address
@@ -30,7 +30,7 @@ transaction(cid: String, description: String) {
     }
 
     execute {
-        Arlequin.mintSceneFreeMintNFT(buyer: self.buyerAddr, cid: cid, description: description, adminRef: self.adminRef)
+        Arlequin.mintSceneFreeMintNFT(buyer: self.buyerAddr, cid: cid, metadata: metadata, adminRef: self.adminRef)
     }
 
 }

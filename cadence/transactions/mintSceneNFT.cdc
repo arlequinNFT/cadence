@@ -6,7 +6,7 @@ import ArleeScene from "../contracts/ArleeScene.cdc"
 import FungibleToken from "../contracts/FungibleToken.cdc"
 import FlowToken from "../contracts/FlowToken.cdc"
 
-transaction(cid: String, description: String) {
+transaction(cid: String, metadata: {String: String}) {
 
     let adminRef: &Arlequin.ArleeSceneAdmin
     let payerVaultRef : &FlowToken.Vault
@@ -40,7 +40,7 @@ transaction(cid: String, description: String) {
         let paymentVault <- self.payerVaultRef.withdraw(amount: price )
         let buyerAddr = self.payerVaultRef.owner!.address
 
-        Arlequin.mintSceneNFT(buyer: buyerAddr, cid: cid, description: description, paymentVault: <- paymentVault, adminRef: self.adminRef)
+        Arlequin.mintSceneNFT(buyer: buyerAddr, cid: cid, metadata: metadata, paymentVault: <- paymentVault, adminRef: self.adminRef)
 
     }
 

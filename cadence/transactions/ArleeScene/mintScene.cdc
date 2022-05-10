@@ -1,6 +1,6 @@
 import Arlequin from "../../contracts/Arlequin.cdc"
 
-transaction(buyer: Address, cid: String, description: String, metadata: {String: String}) {
+transaction(buyer: Address, cid: String, metadata: {String: String}) {
 
     let arleeSceneAdmin : &Arlequin.ArleeSceneAdmin
 
@@ -10,7 +10,7 @@ transaction(buyer: Address, cid: String, description: String, metadata: {String:
     }
 
     execute {
-        self.arleeSceneAdmin.mintSceneNFT(buyer: buyer, cid: cid, description: description, metadata: metadata)
+        self.arleeSceneAdmin.mintSceneNFT(buyer: buyer, cid: cid, metadata: metadata)
     }
 
 }

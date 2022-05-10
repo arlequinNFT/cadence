@@ -4,7 +4,7 @@ import Arlequin from "../contracts/Arlequin.cdc"
 import ArleeSceneVoucher from "../contracts/ArleeSceneVoucher.cdc"
 import ArleeScene from "../contracts/ArleeScene.cdc"
 
-transaction(cid: String, description: String, voucherID: UInt64) {
+transaction(cid: String, metadata: {String: String}, voucherID: UInt64) {
 
     let voucher: @NonFungibleToken.NFT // ArleeSceneVoucher.NFT
     let adminRef: &Arlequin.ArleeSceneAdmin
@@ -24,7 +24,7 @@ transaction(cid: String, description: String, voucherID: UInt64) {
     }
 
     execute {
-        Arlequin.mintSceneFromVoucher(buyer: self.voucher.owner!.address, cid: cid, description: description, voucher: <- self.voucher, adminRef: self.adminRef)
+        Arlequin.mintSceneFromVoucher(buyer: self.voucher.owner!.address, cid: cid, metadata: metadata, voucher: <- self.voucher, adminRef: self.adminRef)
     }
 
 }
