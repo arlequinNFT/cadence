@@ -12,8 +12,8 @@
     ** The Marketpalce Royalty need to be confirmed.
  */
 
- import NonFungibleToken from "./NonFungibleToken.cdc"
- import MetadataViews from "./MetadataViews.cdc"
+ import NonFungibleToken from 0x1d7e57aa55817448
+ import MetadataViews from 0x1d7e57aa55817448
 
  pub contract ArleePartner : NonFungibleToken{
 

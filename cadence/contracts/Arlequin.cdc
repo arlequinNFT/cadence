@@ -1,10 +1,10 @@
-import FungibleToken from "./FungibleToken.cdc"
-import NonFungibleToken from "./NonFungibleToken.cdc"
-import MetadataViews from "./MetadataViews.cdc"
-import FlowToken from "./FlowToken.cdc"
-import ArleePartner from "./ArleePartner.cdc"
-import ArleeScene from "./ArleeScene.cdc"
-import ArleeSceneVoucher from "./ArleeSceneVoucher.cdc"
+import FungibleToken from 0x9a0766d93b6608b7
+import NonFungibleToken from 0x1d7e57aa55817448
+import MetadataViews from 0x1d7e57aa55817448
+import FlowToken from 0xf233dcee88fe0abe
+import ArleePartner from 0xd1eaa1286d4c85a2
+import ArleeScene from 0xd1eaa1286d4c85a2
+import ArleeSceneVoucher from 0xd1eaa1286d4c85a2
 
 pub contract Arlequin {
     
