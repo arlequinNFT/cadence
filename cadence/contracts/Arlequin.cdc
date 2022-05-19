@@ -1,10 +1,10 @@
-import FungibleToken from 0x9a0766d93b6608b7
+import FungibleToken from 0xf233dcee88fe0abe
 import NonFungibleToken from 0x1d7e57aa55817448
 import MetadataViews from 0x1d7e57aa55817448
 import FlowToken from 0xf233dcee88fe0abe
-import ArleePartner from 0xd1eaa1286d4c85a2
-import ArleeScene from 0xd1eaa1286d4c85a2
-import ArleeSceneVoucher from 0xd1eaa1286d4c85a2
+import ArleePartner from 0x47cbd3edd044cb5d
+import ArleeScene from 0x47cbd3edd044cb5d
+import ArleeSceneVoucher from 0x47cbd3edd044cb5d
 
 pub contract Arlequin {
     
