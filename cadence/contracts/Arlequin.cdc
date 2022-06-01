@@ -208,6 +208,10 @@ pub contract Arlequin {
             ArleeScene.setMintable(mintable: mintable)
         }
 
+        pub fun toggleVoucherIsMintable() {
+            ArleeSceneVoucher.mintable = !ArleeSceneVoucher.mintable 
+        }
+
         // for minting
         pub fun mintSceneNFT(buyer: Address, cid: String, metadata: {String: String}) {
             let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
@@ -351,6 +355,9 @@ pub contract Arlequin {
         self.ArleePartnerAdminStoragePath = /storage/ArleePartnerAdmin
         self.ArleeSceneAdminStoragePath = /storage/ArleeSceneAdmin              
         
+        destroy <- self.account.load<@AnyResource>(from: Arlequin.ArleePartnerAdminStoragePath)
+        destroy <- self.account.load<@AnyResource>(from: Arlequin.ArleeSceneAdminStoragePath)
+
         self.account.save(<- create ArleePartnerAdmin(), to:Arlequin.ArleePartnerAdminStoragePath)
         self.account.save(<- create ArleeSceneAdmin(), to:Arlequin.ArleeSceneAdminStoragePath)
         
