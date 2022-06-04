@@ -209,7 +209,7 @@ pub contract Arlequin {
         }
 
         pub fun toggleVoucherIsMintable() {
-            ArleeSceneVoucher.mintable = !ArleeSceneVoucher.mintable 
+            ArleeSceneVoucher.setMintable(mintable: !ArleeSceneVoucher.mintable) 
         }
 
         // for minting
