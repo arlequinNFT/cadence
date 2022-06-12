@@ -1,3 +1,6 @@
+//  import NonFungibleToken from 0x1d7e57aa55817448
+//  import MetadataViews from 0x1d7e57aa55817448
+
 import FungibleToken from "./FungibleToken.cdc"
 import NonFungibleToken from "./NonFungibleToken.cdc"
 import MetadataViews from "./MetadataViews.cdc"
@@ -259,7 +262,7 @@ pub contract Arlequin {
         let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
-        ArleeScene.freeMintAcct[buyer] = ArleeScene.freeMintAcct[buyer]! - 1
+        ArleeScene.deductFreeMintAcctLimit(buyer)
 
         // deposit
         ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, description:description)

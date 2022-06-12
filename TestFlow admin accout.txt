@@ -92,7 +92,7 @@ flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerTotalSupply.c
 
 
 
-
+flow transactions send ./cadence/transactions/ArleeScene/transferArleeScene.cdc 0x00f8d68956c79825 8  -n=mainnet --signer=mainnet-account
 
 
 
@@ -103,7 +103,7 @@ flow scripts execute ./cadence/scripts/ArleePartner/getArleePartnerTotalSupply.c
 flow transactions send ./cadence/transactions/ArleeScene/addFreeMintAcct.cdc 0x4ada5fbd7073699b 2 -n=testnet --signer=testnet-account
 
 // Batch Add Free Mint accounts  (If the account already given free mint, will add on top)
-flow transactions send ./cadence/transactions/ArleeScene/batchAddFreeMintAcct.cdc "{0x4ada5fbd7073699b:1}" -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/batchAddFreeMintAcct.cdc "{0x4e635320583f4edf:1}" -n=mainnet --signer=mainnet-account
 
 // Add free minting limit on top
 flow transactions send ./cadence/transactions/ArleeScene/addFreeMintAcctQuota.cdc 0x4ada5fbd7073699b 1 -n=testnet --signer=testnet-account
@@ -115,13 +115,13 @@ flow transactions send ./cadence/transactions/ArleeScene/setFreeMintAcctQuota.cd
 flow transactions send ./cadence/transactions/ArleeScene/removeFreeMintAcct.cdc 0x4ada5fbd7073699b -n=testnet --signer=testnet-account
 
 // Set Mint Price 
-flow transactions send ./cadence/transactions/ArleeScene/setArleeSceneMintPrice.cdc 20.0 -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/setArleeSceneMintPrice.cdc 16.0 -n=mainnet --signer=mainnet-account
 
 // Set MarketplaceCut
 flow transactions send ./cadence/transactions/ArleeScene/setMarketplaceCut.cdc 0.61 -n=testnet --signer=testnet-account
 
 // Set Mintable
-flow transactions send ./cadence/transactions/ArleeScene/setMintable.cdc true -n=testnet --signer=testnet-account
+flow transactions send ./cadence/transactions/ArleeScene/setMintable.cdc true -n=mainnet --signer=mainnet-account
 
 
 

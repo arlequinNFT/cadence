@@ -8,6 +8,8 @@
     Will be incorporated to Arlee Contract 
     ** The Marketpalce Royalty need to be confirmed.
  */
+//  import NonFungibleToken from 0x1d7e57aa55817448
+//  import MetadataViews from 0x1d7e57aa55817448
 
  import NonFungibleToken from "./NonFungibleToken.cdc"
  import MetadataViews from "./MetadataViews.cdc"
@@ -198,7 +200,7 @@
         }
 
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
         pub fun borrowArleeScene(id: UInt64): &ArleeScene.NFT? {
@@ -206,8 +208,8 @@
                 return nil
             }
 
-            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-            let ref = nftRef as! &ArleeScene.NFT
+            let nftRef = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+            let ref = (nftRef as! &ArleeScene.NFT?)!
 
             return ref
             
@@ -215,10 +217,10 @@
 
         //MetadataViews Implementation
         pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver} {
-            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let nftRef = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
             let ArleeSceneRef = nftRef as! &ArleeScene.NFT
 
-            return ArleeSceneRef as &{MetadataViews.Resolver}
+            return (ArleeSceneRef as &{MetadataViews.Resolver}?)!
         }
 
     }
@@ -344,6 +346,10 @@
 
     access(account) fun setMintable(mintable: Bool) {
         ArleeScene.mintable = mintable
+    }
+
+    access(account) fun deductFreeMintAcctLimit(_ buyer: Address) {
+        ArleeScene.freeMintAcct[buyer] = ArleeScene.freeMintAcct[buyer]! - 1
     }
 
     init(){

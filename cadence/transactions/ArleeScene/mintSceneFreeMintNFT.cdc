@@ -6,11 +6,12 @@ import ArleeScene from "../contracts/ArleeScene.cdc"
 import FungibleToken from "../contracts/FungibleToken.cdc"
 import FlowToken from "../contracts/FlowToken.cdc"
 
-transaction(cid: String, description: String) {
+transaction(cid: String, metadata: {String: String}) {
 
-    let payerVaultRef : &FlowToken.Vault
+    let adminRef: &Arlequin.ArleeSceneAdmin
+    let buyerAddr: Address
 
-    prepare(acct: AuthAccount) {
+    prepare(acct: AuthAccount, adminAcct: AuthAccount) {
         //acct setup
         if acct.borrow<&ArleePartner.Collection>(from: ArleePartner.CollectionStoragePath) == nil {
             acct.save(<- ArleePartner.createEmptyCollection(), to: ArleePartner.CollectionStoragePath)
@@ -24,22 +25,12 @@ transaction(cid: String, description: String) {
                 (ArleeScene.CollectionPublicPath, target:ArleeScene.CollectionStoragePath)
         }
 
-        // prepare payer vault
-        self.payerVaultRef = acct.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault) 
-            ?? panic("Cannot find the flow token vault")
-
+        self.buyerAddr = acct.address
+        self.adminRef = adminAcct.borrow<&Arlequin.ArleeSceneAdmin>(from: Arlequin.ArleeSceneAdminStoragePath) ?? panic("Couldn't borrow ArleeSceneAdmin resource")
     }
 
     execute {
-        // get the price of the mint 
-        let price = Arlequin.getArleeSceneMintPrice()
-
-        // prepare for payment
-        let paymentVault <- self.payerVaultRef.withdraw(amount: price )
-        let buyerAddr = self.payerVaultRef.owner!.address
-
-        Arlequin.mintSceneNFT(buyer: buyerAddr, cid: cid, description: description, paymentVault: <- paymentVault)
-
+        Arlequin.mintSceneFreeMintNFT(buyer: self.buyerAddr, cid: cid, metadata: metadata, adminRef: self.adminRef)
     }
 
 }

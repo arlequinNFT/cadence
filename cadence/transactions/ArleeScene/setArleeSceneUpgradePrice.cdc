@@ -1,6 +1,6 @@
 import Arlequin from 0x47cbd3edd044cb5d
 
-transaction(list:{Address : UInt64}) {
+transaction(price: UFix64) {
 
     let arleeSceneAdmin : &Arlequin.ArleeSceneAdmin
 
@@ -10,7 +10,7 @@ transaction(list:{Address : UInt64}) {
     }
 
     execute {
-        self.arleeSceneAdmin.batchAddFreeMintAcct(list: list)
+        self.arleeSceneAdmin.setArleeSceneUpgradePrice(price: price)
     }
 
 }

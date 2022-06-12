@@ -9,9 +9,9 @@
     "FlowToken": {
       "source": "./cadence/contracts/FlowToken.cdc",
       "aliases": {
+        "emulator": "0x0ae53cb6e3f42a79",
         "testnet": "0x7e60df042a9c0868",
-        "mainnet": "0x1654653399040a61",
-        "emulator": "0x0ae53cb6e3f42a79"
+        "mainnet": "0x1654653399040a61"
       }
     },
     "FungibleToken": {
@@ -38,6 +38,7 @@
     },
     "ArleePartner": "./cadence/contracts/ArleePartner.cdc",
     "ArleeScene": "./cadence/contracts/ArleeScene.cdc",
+    "ArleeSceneVoucher": "./cadence/contracts/ArleeSceneVoucher.cdc",
     "Arlequin": "./cadence/contracts/Arlequin.cdc"
   },
   "networks": {
@@ -51,20 +52,25 @@
       "key": "ae1b44c0f5e8f6992ef2348898a35e50a8b0b9684000da8b1dade1b3bcd6ebee"
     },
     "testnet-account": {
-      "address": "24aeaff3e52669d8",
+      "address": "e7fd8b1148e021b2",
       "key": {
         "type": "hex",
         "index": 0,
         "signatureAlgorithm": "ECDSA_secp256k1",
         "hashAlgorithm": "SHA3_256",
-        "privateKey": "f0e04c6754676457465ede68c89e1d40b9c7999853e317448ecced88a7f1060a",
-        "publicKey": "0feab6bc5e16ec198dd060513bcf27bd3bba1d8b9c16a4c75876345ea0ed70ca45b3c5ec4869a3b75d2ee132eb5114019256226205232f9eee23a4cb23fc2ba4"
+        "privateKey": "b99bb6f174436c051042170b9e278a9d2e0d249a11f56d7b4b0bf78c276ba7de",
+        "publicKey": "7b58d38ffcc8503fc597e31bb298d90ca8fd8282aa21c49cb50e27457e1fda499e62e4830c98c4b36bcaceb835571aac54630f2a6fe1e3d820b758858882513c"
       }
     }
   },
   "deployments": {
     "testnet": {
-      "testnet-account": ["ArleePartner", "ArleeScene", "Arlequin"]
+      "testnet-account": [
+        "ArleePartner",
+        "ArleeScene",
+        "ArleeSceneVoucher",
+        "Arlequin"
+      ]
     },
     "emulator": {
       "emulator-account": [
@@ -72,6 +78,7 @@
         "MetadataViews",
         "ArleePartner",
         "ArleeScene",
+        "ArleeSceneVoucher",
         "Arlequin"
       ]
     }

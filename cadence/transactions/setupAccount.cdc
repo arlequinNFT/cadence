@@ -3,6 +3,7 @@ import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
 import Arlequin from "../contracts/Arlequin.cdc"
 import ArleePartner from "../contracts/ArleePartner.cdc"
 import ArleeScene from "../contracts/ArleeScene.cdc"
+import ArleeSceneVoucher from "../contracts/ArleeSceneVoucher.cdc"
 
 transaction() {
 
@@ -18,6 +19,12 @@ transaction() {
             acct.save(<- ArleeScene.createEmptyCollection(), to: ArleeScene.CollectionStoragePath)
             acct.link<&ArleeScene.Collection{ArleeScene.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>
                 (ArleeScene.CollectionPublicPath, target:ArleeScene.CollectionStoragePath)
+        }
+
+        if acct.borrow<&ArleeSceneVoucher.Collection>(from: ArleeSceneVoucher.CollectionStoragePath) == nil {
+            acct.save(<- ArleeSceneVoucher.createEmptyCollection(), to: ArleeSceneVoucher.CollectionStoragePath)
+            acct.link<&ArleeSceneVoucher.Collection{ArleeSceneVoucher.CollectionPublic, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>
+                (ArleeSceneVoucher.CollectionPublicPath, target:ArleeSceneVoucher.CollectionStoragePath)
         }
     }
 

@@ -1,5 +1,5 @@
-import Arlequin from "../../contracts/Arlequin.cdc"
-import ArleeScene from "../../contracts/ArleeScene.cdc"
+import Arlequin from 0x47cbd3edd044cb5d
+import ArleeScene from 0x47cbd3edd044cb5d
 
 pub fun main(addr: Address) : [&ArleeScene.NFT]? {
     let collectionCap = getAccount(addr).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
