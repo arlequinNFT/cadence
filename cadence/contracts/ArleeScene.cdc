@@ -8,11 +8,9 @@
     Will be incorporated to Arlee Contract 
     ** The Marketpalce Royalty need to be confirmed.
  */
-//  import NonFungibleToken from 0x1d7e57aa55817448
-//  import MetadataViews from 0x1d7e57aa55817448
 
- import NonFungibleToken from "./NonFungibleToken.cdc"
- import MetadataViews from "./MetadataViews.cdc"
+ import NonFungibleToken from 0x1d7e57aa55817448
+ import MetadataViews from 0x1d7e57aa55817448
 
 
  pub contract ArleeScene : NonFungibleToken{
@@ -38,6 +36,9 @@
     pub event Deposit(id: UInt64, to: Address?)
     pub event Created(id: UInt64, cid:String, royalties: [Royalty], creator:Address)
 
+    pub event ArleeCIDUpdated(id: UInt64, oldCID:String, newCID:String)
+    pub event MetadataUpdated(key: String, value: String, oldValue: String?)
+    
     pub event FreeMintListAcctUpdated(address: Address, mint:UInt64)
     pub event FreeMintListAcctRemoved(address: Address)
 
@@ -64,23 +65,36 @@
         }
     }
 
-    // ArleeScene NFT (includes the CID, description, creator, royalty)
+    // ArleeScene NFT (includes the CID, creator, royalty)
     pub resource NFT : NonFungibleToken.INFT, MetadataViews.Resolver {
         pub let id: UInt64
-        pub let cid: String
-        pub let description: String
+        pub var cid: String
         pub let creator: Address
+        pub let metadata: {String: String}
         access(contract) let royalties: [Royalty]
 
-        init(cid: String, description:String, creator: Address, royalties:[Royalty]){
+        init(cid: String, creator: Address, royalties:[Royalty], metadata: {String: String}){
             self.id = ArleeScene.totalSupply
             self.cid = cid
-            self.description = description
             self.creator = creator
             self.royalties = royalties
+            self.metadata = metadata
 
             // update totalSupply
             ArleeScene.totalSupply = ArleeScene.totalSupply +1
+        }
+
+        // function for upgrading Arlee by replacing CID
+        access(account) fun updateCID(newCID: String) {
+            let oldCID = self.cid
+            self.cid = newCID
+            emit ArleeCIDUpdated(id: self.id, oldCID: oldCID, newCID: newCID)
+        }
+
+        access(account) fun updateMetadata(key: String, value: String) {
+            let oldValue = self.metadata[key]
+            self.metadata[key] = value
+            emit MetadataUpdated(key: key, value: value, oldValue: oldValue)
         }
 
         // Function to return royalty
@@ -200,7 +214,7 @@
         }
 
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
+            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
         }
 
         pub fun borrowArleeScene(id: UInt64): &ArleeScene.NFT? {
@@ -208,8 +222,8 @@
                 return nil
             }
 
-            let nftRef = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
-            let ref = (nftRef as! &ArleeScene.NFT?)!
+            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let ref = nftRef as! &ArleeScene.NFT
 
             return ref
             
@@ -217,10 +231,10 @@
 
         //MetadataViews Implementation
         pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver} {
-            let nftRef = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
             let ArleeSceneRef = nftRef as! &ArleeScene.NFT
 
-            return (ArleeSceneRef as &{MetadataViews.Resolver}?)!
+            return ArleeSceneRef as &{MetadataViews.Resolver}
         }
 
     }
@@ -234,7 +248,7 @@
     pub fun getArleeSceneIDs(addr: Address): [UInt64]? {
         let holderCap = getAccount(addr).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         
-        if holderCap.borrow == nil {
+        if holderCap.borrow() == nil {
             return nil
         }
         
@@ -281,7 +295,7 @@
         emit MarketplaceCutUpdate(oldCut:oldCut, newCut:cut)
     }
 
-    access(account) fun mintSceneNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, description:String) {
+    access(account) fun mintSceneNFT(recipient:&ArleeScene.Collection{ArleeScene.CollectionPublic}, cid:String, metadata: {String: String}) {
         pre{
             ArleeScene.mintable : "Public minting is not available at the moment."
         }
@@ -290,7 +304,7 @@
         let ownerAddr = recipient.owner!.address
 
         let royalties = ArleeScene.getRoyalty()
-        let newNFT <- create ArleeScene.NFT(cid: cid, description: description, creator: ownerAddr, royalties:royalties)
+        let newNFT <- create ArleeScene.NFT(cid: cid, creator: ownerAddr, royalties:royalties, metadata: metadata)
         
         ArleeScene.mintedScenes[newNFT.id] = cid
         emit Created(id:newNFT.id, cid:cid, royalties:royalties, creator: ownerAddr)
@@ -348,8 +362,19 @@
         ArleeScene.mintable = mintable
     }
 
-    access(account) fun deductFreeMintAcctLimit(_ buyer: Address) {
-        ArleeScene.freeMintAcct[buyer] = ArleeScene.freeMintAcct[buyer]! - 1
+    /* Contract functions for updating NFT metadata */
+    access(account) fun updateCID(arleeSceneNFT: @NonFungibleToken.NFT, newCID: String): @NonFungibleToken.NFT {
+        let nftRef = &arleeSceneNFT as auth &NonFungibleToken.NFT
+        let ref = nftRef as! &ArleeScene.NFT
+        ref.updateCID(newCID: newCID)
+        return <- arleeSceneNFT
+    }
+
+    access(account) fun updateMetadata(arleeSceneNFT: @NonFungibleToken.NFT, key: String, value: String): @NonFungibleToken.NFT {
+        let nftRef = &arleeSceneNFT as auth &NonFungibleToken.NFT
+        let ref = nftRef as! &ArleeScene.NFT
+        ref.updateMetadata(key: key, value: value)
+        return <- arleeSceneNFT
     }
 
     init(){

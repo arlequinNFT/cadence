@@ -1,17 +1,17 @@
-//  import NonFungibleToken from 0x1d7e57aa55817448
-//  import MetadataViews from 0x1d7e57aa55817448
-
-import FungibleToken from "./FungibleToken.cdc"
-import NonFungibleToken from "./NonFungibleToken.cdc"
-import MetadataViews from "./MetadataViews.cdc"
-import FlowToken from "./FlowToken.cdc"
-import ArleePartner from "./ArleePartner.cdc"
-import ArleeScene from "./ArleeScene.cdc"
+import FungibleToken from 0xf233dcee88fe0abe
+import NonFungibleToken from 0x1d7e57aa55817448
+import MetadataViews from 0x1d7e57aa55817448
+import FlowToken from 0x1654653399040a61
+import ArleePartner from 0x47cbd3edd044cb5d
+import ArleeScene from 0x47cbd3edd044cb5d
+import ArleeSceneVoucher from 0x47cbd3edd044cb5d
 
 pub contract Arlequin {
     
     pub var arleepartnerNFTPrice : UFix64 
     pub var sceneNFTPrice : UFix64
+    pub var arleeSceneVoucherPrice: UFix64
+    pub var arleeSceneUpgradePrice: UFix64
 
     // This is the ratio to partners in arleepartnerNFT sales, ratio to Arlequin will be (1 - partnerSplitRatio)
     pub var partnerSplitRatio : UFix64
@@ -19,6 +19,9 @@ pub contract Arlequin {
     // Paths
     pub let ArleePartnerAdminStoragePath : StoragePath
     pub let ArleeSceneAdminStoragePath : StoragePath
+
+    // Events
+    pub event VoucherClaimed(address: Address, voucherID: UInt64)
 
     // Query Functions
     /* For ArleePartner */
@@ -115,6 +118,13 @@ pub contract Arlequin {
         return Arlequin.sceneNFTPrice
     }
 
+    pub fun getArleeSceneVoucherMintPrice() : UFix64 {
+        return Arlequin.arleeSceneVoucherPrice
+    }    
+    
+    pub fun getArleeSceneUpgradePrice() : UFix64 {
+        return Arlequin.arleeSceneUpgradePrice
+    }
 
 
     pub resource ArleePartnerAdmin {
@@ -199,8 +209,23 @@ pub contract Arlequin {
         }
 
         // for minting
+        pub fun mintSceneNFT(buyer: Address, cid: String, metadata: {String: String}) {
+            let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
+            let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
+
+            ArleeScene.mintSceneNFT(recipient:recipient, cid: cid, metadata: metadata)
+        }
+
         pub fun setArleeSceneMintPrice(price: UFix64) {
             Arlequin.sceneNFTPrice = price
+        }
+
+        pub fun setArleeSceneVoucherMintPrice(price: UFix64) {
+            Arlequin.arleeSceneVoucherPrice = price
+        }    
+        
+        pub fun setArleeSceneUpgradePrice(price: UFix64) {
+            Arlequin.arleeSceneUpgradePrice = price
         }
 
     }
@@ -234,7 +259,7 @@ pub contract Arlequin {
     }
 
     /* Public Minting for ArleeSceneNFT */
-    pub fun mintSceneNFT(buyer: Address, cid: String, description:String, paymentVault:  @FungibleToken.Vault) {
+    pub fun mintSceneNFT(buyer: Address, cid: String, metadata: {String: String}, paymentVault:  @FungibleToken.Vault, adminRef: &ArleeSceneAdmin) {
         pre{
             paymentVault.balance >= Arlequin.sceneNFTPrice: "Insufficient payment amount."
             paymentVault.getType() == Type<@FlowToken.Vault>(): "payment type not in FlowToken.Vault."
@@ -249,11 +274,11 @@ pub contract Arlequin {
         // deposit
         arlequinVault.deposit(from: <- paymentVault)
 
-        ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, description:description)
+        ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, metadata: metadata)
     }
 
     /* Free Minting for ArleeSceneNFT */
-    pub fun mintSceneFreeMintNFT(buyer: Address, cid: String, description:String) {
+    pub fun mintSceneFreeMintNFT(buyer: Address, cid: String, metadata: {String: String}, adminRef: &ArleeSceneAdmin) {
         pre{
             Arlequin.getArleeSceneFreeMintQuota(addr: buyer) != nil : "You are not given free mint quotas"
             Arlequin.getArleeSceneFreeMintQuota(addr: buyer)! > 0 : "You ran out of free mint quotas"
@@ -262,15 +287,64 @@ pub contract Arlequin {
         let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
-        ArleeScene.deductFreeMintAcctLimit(buyer)
+        ArleeScene.freeMintAcct[buyer] = ArleeScene.freeMintAcct[buyer]! - 1
 
         // deposit
-        ArleeScene.mintSceneNFT(recipient:recipient, cid:cid, description:description)
+        ArleeScene.mintSceneNFT(recipient:recipient, cid: cid, metadata: metadata)
+    }
+
+    /* Public Minting ArleeSceneVoucher NFT */
+    pub fun mintVoucherNFT(buyer: Address, species: String, paymentVault: @FungibleToken.Vault, adminRef: &ArleeSceneAdmin) {
+        pre {
+            paymentVault.balance >= Arlequin.arleeSceneVoucherPrice: "Insufficient funds provided to mint the voucher"
+            paymentVault.getType() == Type<@FlowToken.Vault>(): "Funds provided are not Flow Tokens!"
+        }
+
+        let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receving vault reference")
+        let recipientRef = getAccount(buyer).getCapability<&ArleeSceneVoucher.Collection{ArleeSceneVoucher.CollectionPublic}>(ArleeSceneVoucher.CollectionPublicPath).borrow() ?? panic("Cannot borrow recipient's collection")
+
+        arlequinVault.deposit(from: <- paymentVault)
+
+        ArleeSceneVoucher.mintVoucherNFT(recipient: recipientRef, species: species)
+    }
+
+    /* Minting from ArleeSceneNFT from ArleeSceneVoucher (doesn't allow possibility to change cid, metadata etc. only validate on backend */
+    pub fun mintSceneFromVoucher(buyer: Address, cid: String, metadata: {String: String}, voucher: @NonFungibleToken.NFT, adminRef: &ArleeSceneAdmin) {
+        pre {
+            voucher.getType() == Type<@ArleeSceneVoucher.NFT>(): "Voucher NFT is not of correct Type"  
+        }
+        let recipientRef = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath).borrow() ?? panic("Cannot borrow recipient's ArleeScene CollectionPublic")
+        ArleeScene.mintSceneNFT(recipient: recipientRef, cid: cid, metadata: metadata)
+        destroy voucher   
+    }
+
+    /* Redeem Voucher - general purpose voucher consumption function, backend can proceed to mint once voucher is redeemed */
+    pub fun redeemVoucher(address: Address, voucher: @NonFungibleToken.NFT, adminRef: &ArleeSceneAdmin) {
+        pre {
+            voucher.getType() == Type<@ArleeSceneVoucher.NFT>(): "Provided NFT is not an ArleeSceneVoucher!"
+        }
+        emit VoucherClaimed(address: address, voucherID: voucher.id)
+        destroy voucher
+    }
+
+    /* Upgrade Arlee */
+    pub fun updateArleeCID(arlee: @NonFungibleToken.NFT, paymentVault: @FungibleToken.Vault, cid: String, adminRef: &ArleeSceneAdmin): @NonFungibleToken.NFT {
+        pre {
+            arlee.getType() == Type<@ArleeScene.NFT>(): "Incorrect NFT type provided!"
+            paymentVault.balance >= Arlequin.arleeSceneUpgradePrice: "Insufficient funds provided to upgrade Arlee"
+            paymentVault.getType() == Type<@FlowToken.Vault>(): "Funds provided are not Flow Tokens!"
+        }
+        let arlequinVault = self.account.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault) ?? panic("Cannot borrow Arlequin's receving vault reference")
+        arlequinVault.deposit(from: <- paymentVault)
+
+        return <- ArleeScene.updateCID(arleeSceneNFT: <- arlee, newCID: cid)
     }
 
     init(){
         self.arleepartnerNFTPrice = 10.0
         self.sceneNFTPrice = 10.0
+        self.arleeSceneVoucherPrice = 12.0
+        self.arleeSceneUpgradePrice = 9.0
 
         self.partnerSplitRatio = 1.0
 
