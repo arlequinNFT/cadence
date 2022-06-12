@@ -1,4 +1,4 @@
-import Arlequin from "../../contracts/Arlequin.cdc"
+import Arlequin from 0x47cbd3edd044cb5d
 
 transaction(price: UFix64) {
 

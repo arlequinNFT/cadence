@@ -1,5 +1,5 @@
-import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
-import ArleeScene from "../contracts/ArleeScene.cdc"
+import NonFungibleToken from 0x1d7e57aa55817448
+import ArleeScene from 0x47cbd3edd044cb5d
 
 transaction(recipient: Address, withdrawID: UInt64) {
 
