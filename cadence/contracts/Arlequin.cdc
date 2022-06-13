@@ -306,7 +306,7 @@ pub contract Arlequin {
         let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
-        ArleeScene.freeMintAcct[buyer] = ArleeScene.freeMintAcct[buyer]! - 1
+        ArleeScene.deductFreeMintAcct(addr: buyer, mint: 1)
 
         // deposit
         ArleeScene.mintSceneNFT(recipient:recipient, cid: cid, metadata: metadata)

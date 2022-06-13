@@ -8,7 +8,7 @@
     Will be incorporated to Arlee Contract 
     ** The Marketpalce Royalty need to be confirmed.
  */
-
+ 
 // mainnet
 // import NonFungibleToken from 0x1d7e57aa55817448
 // import MetadataViews from 0x1d7e57aa55817448
@@ -222,7 +222,7 @@ import MetadataViews from 0x631e88ae7f1d7c20
         }
 
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
         pub fun borrowArleeScene(id: UInt64): &ArleeScene.NFT? {
@@ -230,7 +230,7 @@ import MetadataViews from 0x631e88ae7f1d7c20
                 return nil
             }
 
-            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let nftRef = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
             let ref = nftRef as! &ArleeScene.NFT
 
             return ref
@@ -239,7 +239,7 @@ import MetadataViews from 0x631e88ae7f1d7c20
 
         //MetadataViews Implementation
         pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver} {
-            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let nftRef = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
             let ArleeSceneRef = nftRef as! &ArleeScene.NFT
 
             return ArleeSceneRef as &{MetadataViews.Resolver}
@@ -337,6 +337,16 @@ import MetadataViews from 0x631e88ae7f1d7c20
             }
         }
     }
+
+    access(account) fun deductFreeMintAcct(addr: Address, mint:UInt64) {
+        pre{
+            ArleeScene.freeMintAcct[addr] != nil : "This address is not registered in Free Mint list."
+        }
+        ArleeScene.freeMintAcct[addr] = ArleeScene.freeMintAcct[addr]! - mint
+
+        emit FreeMintListAcctUpdated(address: addr, mint:mint)
+    }
+
 
     access(account) fun removeFreeMintAcct(addr: Address) {
         pre{
