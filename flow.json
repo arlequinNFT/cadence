@@ -61,17 +61,6 @@
         "privateKey": "b99bb6f174436c051042170b9e278a9d2e0d249a11f56d7b4b0bf78c276ba7de",
         "publicKey": "7b58d38ffcc8503fc597e31bb298d90ca8fd8282aa21c49cb50e27457e1fda499e62e4830c98c4b36bcaceb835571aac54630f2a6fe1e3d820b758858882513c"
       }
-    },
-    "mainnet-account": {
-      "address": "47cbd3edd044cb5d",
-      "key": {
-        "type": "hex",
-        "index": 0,
-        "signatureAlgorithm": "ECDSA_P256",
-        "hashAlgorithm": "SHA3_256",
-        "privateKey": "a05ee64a6f2bb5295682d089ce552f96ed5a9cadfaa1339605821db4f588b12e",
-        "publicKey": "3d6c6044dc6b297c29f1af30b57439bddaf108c0ef50f3eb29085aabd9403a7b323ec8d6f71d788ef65becf9f5296330da145e3f6e60ceed0c20b514be067a3f"
-      }
     }
   },
   "deployments": {
