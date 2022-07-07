@@ -1,10 +1,10 @@
-import MetadataViews from "../contracts/MetadataViews.cdc"
-import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
+import MetadataViews from "../contracts/lib/MetadataViews.cdc"
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
 import Arlequin from "../contracts/Arlequin.cdc"
 import ArleePartner from "../contracts/ArleePartner.cdc"
 import ArleeScene from "../contracts/ArleeScene.cdc"
-import FungibleToken from "../contracts/FungibleToken.cdc"
-import FlowToken from "../contracts/FlowToken.cdc"
+import FungibleToken from "../contracts/lib/FungibleToken.cdc"
+import FlowToken from "../contracts/lib/FlowToken.cdc"
 
 transaction(cid: String, metadata: {String: String}) {
 

@@ -1,10 +1,12 @@
-import FungibleToken from 0xf233dcee88fe0abe
-import NonFungibleToken from 0x1d7e57aa55817448
-import MetadataViews from 0x1d7e57aa55817448
-import FlowToken from 0x1654653399040a61
-import ArleePartner from 0x47cbd3edd044cb5d
-import ArleeScene from 0x47cbd3edd044cb5d
-import ArleeSceneVoucher from 0x47cbd3edd044cb5d
+import FungibleToken from "./lib/FungibleToken.cdc" // 0xf233dcee88fe0abe
+import NonFungibleToken from "./lib/NonFungibleToken.cdc" // 0x1d7e57aa55817448
+import MetadataViews from "./lib/MetadataViews.cdc" // 0x1d7e57aa55817448
+import FlowToken from "./lib/FlowToken.cdc" // 0x1654653399040a61
+import FLOAT from "./lib/FLOAT.cdc"
+
+import ArleePartner from "ArleePartner.cdc" // 0x47cbd3edd044cb5d
+import ArleeScene from "ArleeScene.cdc" // 0x47cbd3edd044cb5d
+import ArleeSceneVoucher from "ArleeSceneVoucher.cdc" // 0x47cbd3edd044cb5d
 
 pub contract Arlequin {
     
@@ -283,15 +285,15 @@ pub contract Arlequin {
 
     /* Free Minting for ArleeSceneNFT */
     pub fun mintSceneFreeMintNFT(buyer: Address, cid: String, metadata: {String: String}, adminRef: &ArleeSceneAdmin) {
-        pre{
-            Arlequin.getArleeSceneFreeMintQuota(addr: buyer) != nil : "You are not given free mint quotas"
-            Arlequin.getArleeSceneFreeMintQuota(addr: buyer)! > 0 : "You ran out of free mint quotas"
-        }
+        let userQuota = Arlequin.getArleeSceneFreeMintQuota(addr: buyer)!
+
+        assert(userQuota != nil, message: "You are not given free mint quotas")
+        assert(userQuota > 0, message: "You ran out of free mint quotas")
 
         let recipientCap = getAccount(buyer).getCapability<&ArleeScene.Collection{ArleeScene.CollectionPublic}>(ArleeScene.CollectionPublicPath)
         let recipient = recipientCap.borrow() ?? panic("Cannot borrow recipient's Collection Public")
 
-        ArleeScene.freeMintAcct[buyer] = ArleeScene.freeMintAcct[buyer]! - 1
+        ArleeScene.setFreeMintAcctQuota(addr: buyer, mint: userQuota-1)
 
         // deposit
         ArleeScene.mintSceneNFT(recipient:recipient, cid: cid, metadata: metadata)
@@ -344,6 +346,7 @@ pub contract Arlequin {
         return <- ArleeScene.updateCID(arleeSceneNFT: <- arlee, newCID: cid)
     }
 
+    // NOTE: Contract needs to be removed and redeployed (not upgraded) to re-run the initalization.
     init(){
         self.arleepartnerNFTPrice = 10.0
         self.sceneNFTPrice = 10.0
@@ -359,8 +362,7 @@ pub contract Arlequin {
         destroy <- self.account.load<@AnyResource>(from: Arlequin.ArleeSceneAdminStoragePath)
 
         self.account.save(<- create ArleePartnerAdmin(), to:Arlequin.ArleePartnerAdminStoragePath)
-        self.account.save(<- create ArleeSceneAdmin(), to:Arlequin.ArleeSceneAdminStoragePath)
-        
+        self.account.save(<- create ArleeSceneAdmin(), to:Arlequin.ArleeSceneAdminStoragePath)  
     }
 
 

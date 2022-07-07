@@ -1,4 +1,4 @@
-import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
 import ArleeSceneVoucher from "../contracts/ArleeSceneVoucher.cdc"
 
 transaction(recipient: Address, withdrawID: UInt64) {

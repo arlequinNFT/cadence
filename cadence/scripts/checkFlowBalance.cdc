@@ -1,5 +1,5 @@
-import FungibleToken from "../contracts/FungibleToken.cdc"
-import FlowToken from "../contracts/FlowToken.cdc"
+import FungibleToken from "../contracts/lib/FungibleToken.cdc"
+import FlowToken from "../contracts/lib/FlowToken.cdc"
 
 pub fun main(addr: Address) : UFix64 {
 

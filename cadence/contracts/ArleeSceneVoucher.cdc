@@ -1,5 +1,5 @@
- import NonFungibleToken from 0x1d7e57aa55817448
- import MetadataViews from 0x1d7e57aa55817448
+ import NonFungibleToken from "./lib/NonFungibleToken.cdc" // 0x1d7e57aa55817448
+ import MetadataViews from "./lib/MetadataViews.cdc" // 0x1d7e57aa55817448
 
  pub contract ArleeSceneVoucher : NonFungibleToken{
 
@@ -160,7 +160,7 @@
         }
 
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
         pub fun borrowArleeSceneVoucher(id: UInt64): &ArleeSceneVoucher.NFT? {
@@ -168,7 +168,7 @@
                 return nil
             }
 
-            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT?
             let ref = nftRef as! &ArleeSceneVoucher.NFT
 
             return ref
@@ -177,7 +177,7 @@
 
         //MetadataViews Implementation
         pub fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver} {
-            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let nftRef = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT?
             let ArleeSceneVoucherRef = nftRef as! &ArleeSceneVoucher.NFT
 
             return ArleeSceneVoucherRef as &{MetadataViews.Resolver}

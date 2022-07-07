@@ -1,5 +1,5 @@
-import MetadataViews from "../contracts/MetadataViews.cdc"
-import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
+import MetadataViews from "../contracts/lib/MetadataViews.cdc"
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
 import Arlequin from "../contracts/Arlequin.cdc"
 import ArleeSceneVoucher from "../contracts/ArleeSceneVoucher.cdc"
 import ArleeScene from "../contracts/ArleeScene.cdc"
