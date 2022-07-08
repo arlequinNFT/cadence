@@ -8,17 +8,17 @@ pub contract EggFloat {
 
     pub let EggAdminStoragePath: StoragePath
 
-	pub struct Egg {
-		pub let eventID: UInt64
-		pub let cid: String
-		pub let metadata: {String: String}
+    pub struct Egg {
+        pub let eventID: UInt64
+        pub let cid: String
+        pub let metadata: {String: String}
 
-		init(eventID: UInt64, cid: String, metadata: {String: String}) {
-			self.eventID = eventID
-			self.cid = cid
-			self.metadata = metadata
-		}
-	}
+        init(eventID: UInt64, cid: String, metadata: {String: String}) {
+            self.eventID = eventID
+            self.cid = cid
+            self.metadata = metadata
+        }
+    }
 
     pub fun getEggs(): {UInt64: Egg} {
         return self.eggsByID
@@ -48,13 +48,13 @@ pub contract EggFloat {
         }
     }   
 
-	init() {
+    init() {
         self.eggsByID = {}
         self.EggAdminStoragePath = /storage/ArleeEggFloatAdminStoragePath
     
         destroy self.account.load<@AnyResource>(from: self.EggAdminStoragePath)
         self.account.save(<- create Admin(), to: self.EggAdminStoragePath)
     
-	}
+    }
 
 }
