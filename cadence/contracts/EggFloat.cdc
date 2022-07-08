@@ -4,7 +4,7 @@ import ArleeScene from "./ArleeScene.cdc"
 
 pub contract EggFloat {
 
-    pub let eggsByID: {UInt64: Egg}
+    access(contract) let eggsByID: {UInt64: Egg}
 
     pub let EggAdminStoragePath: StoragePath
 
