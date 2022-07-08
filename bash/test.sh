@@ -100,6 +100,6 @@ flow scripts execute ./cadence/scripts/float/get_float.cdc 0x179b6b1cb6755e31 58
 flow transactions send ./cadence/transactions/EggFloat/registerEvent.cdc 49 "My Eggy Arlee" {}
 
 flow transactions send ./cadence/transactions/EggFloat/claim.cdc 52
-flow transactions send ./cadence/transactions/EggFloat/claim.cdc 57 --signer emulator-user-account1
+flow transactions send ./cadence/transactions/EggFloat/claim.cdc 58 --signer emulator-user-account1
 
 flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0x179b6b1cb6755e31
