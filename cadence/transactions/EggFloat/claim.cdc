@@ -16,14 +16,10 @@ transaction(withdrawID: UInt64) {
         let collection = signer.borrow<&FLOAT.Collection>(from: FLOAT.FLOATCollectionStoragePath) 
         
         if collection != nil {
-            log("TEST")
-
             let floatRef = collection!.borrowFLOAT(id: withdrawID) ?? panic("Float not found")
             let floatUUID = floatRef.uuid
-            if floatRef != nil {
-                let cap = signer.link<&{NonFungibleToken.Provider}>(/private/ArleeEggFloatProvider, target: FLOAT.FLOATCollectionStoragePath)!
-                EggFloat.hatchEgg(floatRef: floatRef, floatProviderCap: cap)
-            }  
+            let cap = signer.link<&{NonFungibleToken.Provider}>(/private/ArleeEggFloatProvider, target: FLOAT.FLOATCollectionStoragePath)!
+            EggFloat.hatchEgg(floatRef: floatRef, floatProviderCap: cap)
         }
     }
 }
