@@ -103,3 +103,26 @@ flow transactions send ./cadence/transactions/EggFloat/claim.cdc 52
 flow transactions send ./cadence/transactions/EggFloat/claim.cdc 58 --signer emulator-user-account1
 
 flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0x179b6b1cb6755e31
+
+# Create a 2nd event
+flow transactions send ./cadence/transactions/float/create_event.cdc f8d6e0586b0a20c7 true 2ndtest anothertest "http://image.url" "https://test.url/" true false 1230000.0 1000.0 false "z" true 100 \[\] true 100.0
+# 62
+
+# Claim the float
+flow transactions send ./cadence/transactions/float/claim.cdc 62 f8d6e0586b0a20c7 "1"
+# 65
+
+# get metadata
+flow scripts execute ./cadence/scripts/float/get_float.cdc f8d6e0586b0a20c7 65
+
+# try to claim float
+flow transactions send ./cadence/transactions/EggFloat/claim.cdc 65
+# This egg is not an arlee egg float!
+
+flow transactions send ./cadence/transactions/EggFloat/registerEvent.cdc 62 "It is now." {}
+
+# Now can claim :)
+flow scripts execute ./cadence/scripts/float/get_float.cdc f8d6e0586b0a20c7 65
+
+# Check the arlees out
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc f8d6e0586b0a20c7
