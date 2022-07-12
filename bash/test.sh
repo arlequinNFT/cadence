@@ -16,11 +16,9 @@ flow accounts create --key="62410c9c523d7a04f8b5c1b478cbada16d70125be9c8e137baa8
 # 2. Mint Flow tokens
 
 # Flow tokens required for admin-account to be able to deploy contracts without running out of storage space.
-# mintFlowTokens amount recipientAddress
 flow transactions send "./cadence/transactions/Flow/mint.cdc" 1000.0 0x01cf0e2f2f715450
 flow transactions send "./cadence/transactions/Flow/mint.cdc" 1000.0 0x179b6b1cb6755e31
 flow transactions send "./cadence/transactions/Flow/mint.cdc" 1000.0 0xf3fcd2c1a78f5eee
-
 
 flow project deploy --network emulator
 
@@ -28,15 +26,16 @@ flow transactions send ./cadence/transactions/float/setup_account.cdc
 
 flow transactions send ./cadence/transactions/ArleeScene/setMintable.cdc true 
 
-
 flow transactions send ./cadence/transactions/mintSceneNFT.cdc hiCID {} 
 
-flow transactions send ./cadence/transactions/setupAccount.cdc 
 flow transactions send ./cadence/transactions/transferArleeScene.cdc f8d6e0586b0a20c7 0
+
+# Float -> Egg tests
 
 # Float
 flow transactions send ./cadence/transactions/float/setup_account.cdc
 
+echo "Creating Float Event"
 #  forHost: Address, 
 #  claimable: Bool, 
 #  name: String, 
@@ -66,63 +65,61 @@ flow transactions send ./cadence/transactions/float/create_event.cdc f8d6e0586b0
 #		- name (String): "TestName"
 #		- url (String): "https://test.url/"
 
-
+echo "Users Claims their Float"
 # event, host, secret
-flow transactions send ./cadence/transactions/float/claim.cdc 49 f8d6e0586b0a20c7 "1"
-
-flow transactions send ./cadence/transactions/float/claim.cdc 49 f8d6e0586b0a20c7 "2" --signer emulator-user-account1
-
-
-flow scripts execute ./cadence/scripts/float/get_float_ids.cdc f8d6e0586b0a20c7
-flow scripts execute ./cadence/scripts/float/get_float.cdc f8d6e0586b0a20c7 52
+flow transactions send ./cadence/transactions/float/claim.cdc 49 0xf8d6e0586b0a20c7 "secret" --signer emulator-user-account1
+flow transactions send ./cadence/transactions/float/claim.cdc 49 0xf8d6e0586b0a20c7 "secret" --signer emulator-user-account2
 
 flow scripts execute ./cadence/scripts/float/get_float_ids.cdc 0x179b6b1cb6755e31
-flow scripts execute ./cadence/scripts/float/get_float.cdc 0x179b6b1cb6755e31 58
+flow scripts execute ./cadence/scripts/float/get_float_ids.cdc 0xf3fcd2c1a78f5eee
+flow scripts execute ./cadence/scripts/float/get_float.cdc 0x179b6b1cb6755e31 55
+flow scripts execute ./cadence/scripts/float/get_float.cdc 0xf3fcd2c1a78f5eee 61
 
-# Result: 
-#   A.f8d6e0586b0a20c7.FLOAT.FLOATEvent(
-#       uuid: 42, 
-#       claimable: true, 
-#       claimed: {0xf8d6e0586b0a20c7: A.f8d6e0586b0a20c7.FLOAT.TokenIdentifier(id: 45, address: 0xf8d6e0586b0a20c7, serial: 0)}, 
-#       currentHolders: {0: A.f8d6e0586b0a20c7.FLOAT.TokenIdentifier(id: 45, address: 0xf8d6e0586b0a20c7, serial: 0)}, 
-#       dateCreated: 1657155753.00000000, description: "TestDescription", eventId: 42, 
-#       extraMetadata: 
-#           {"prices": {"A.0ae53cb6e3f42a79.FlowToken.Vault": A.f8d6e0586b0a20c7.FLOAT.TokenInfo(path: /public/flowTokenReceiver, price: 100.00000000)}}, 
-#       groups: {}, 
-#       host: 0xf8d6e0586b0a20c7, 
-#       image: "http://image.url", 
-#       name: "TestName", 
-#       totalSupply: 1, 
-#       transferrable: true, 
-#       url: "https://test.url/", 
-#       verifiers: {"A.f8d6e0586b0a20c7.FLOATVerifiers.Limited": [A.f8d6e0586b0a20c7.FLOATVerifiers.Limited(capacity: 100)]})
+echo "Register FloatEvent -> Eggs"
+# flow transactions send ./cadence/transactions/EggFloat/registerEvent_template.cdc 49
+flow transactions send ./cadence/transactions/EggFloat/registerEvent.cdc 49 '["cid1","cid2","cid3"]' '[{"trait":"gnarly"},{"trait":"dope"},{"trait":"funky"}]' "[10,40,50]"
 
-flow transactions send ./cadence/transactions/EggFloat/registerEvent.cdc 49 "My Eggy Arlee" {}
+# Admin Co-signed (floatID, signer)
+./bash/adminSignedClaim.sh 55 emulator-user-account1
+./bash/adminSignedClaim.sh 61 emulator-user-account2
 
-flow transactions send ./cadence/transactions/EggFloat/claim.cdc 52
-flow transactions send ./cadence/transactions/EggFloat/claim.cdc 58 --signer emulator-user-account1
+#flow transactions build ./cadence/transactions/EggFloat/claim.cdc 58 --authorizer "emulator-user-account1","emulator-account" --save claim.rlp -y --filter payload 
+#flow transactions sign claim.rlp --signer "emulator-user-account1" --include payload --filter payload --save claim.rlp -y
+#flow transactions sign claim.rlp --signer "emulator-account"       --include payload --filter payload --save claim.rlp -y
+#flow transactions send-signed claim.rlp -y
 
 flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0x179b6b1cb6755e31
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0xf3fcd2c1a78f5eee
 
-# Create a 2nd event
-flow transactions send ./cadence/transactions/float/create_event.cdc f8d6e0586b0a20c7 true 2ndtest anothertest "http://image.url" "https://test.url/" true false 1230000.0 1000.0 false "z" true 100 \[\] true 100.0
-# 62
+
+# Setup 2nd Float Event
+flow transactions send ./cadence/transactions/float/create_event.cdc f8d6e0586b0a20c7 true SecondTestEvent SecondTestEvent "http://SecondTestEvent.url" "https://SecondTestEvent.url/" true false 1230000.0 1000.0 false "z" true 100 \[\] true 100.0
+#66
 
 # Claim the float
-flow transactions send ./cadence/transactions/float/claim.cdc 62 f8d6e0586b0a20c7 "1"
-# 65
+flow transactions send ./cadence/transactions/float/claim.cdc 66 f8d6e0586b0a20c7 "secret" --signer emulator-user-account1
+# 69
+flow transactions send ./cadence/transactions/float/claim.cdc 66 f8d6e0586b0a20c7 "secret" --signer emulator-user-account2
+#72
 
 # get metadata
-flow scripts execute ./cadence/scripts/float/get_float.cdc f8d6e0586b0a20c7 65
+flow scripts execute ./cadence/scripts/float/get_float.cdc 0x179b6b1cb6755e31 69
+flow scripts execute ./cadence/scripts/float/get_float.cdc 0xf3fcd2c1a78f5eee 72
 
-# try to claim float
-flow transactions send ./cadence/transactions/EggFloat/claim.cdc 65
+# try to claim float (not registered should fail)
+flow transactions send ./cadence/transactions/EggFloat/claim.cdc 69 #insufficient signers
+./bash/adminSignedClaim.sh 69 emulator-user-account1 
+./bash/adminSignedClaim.sh 72 emulator-user-account2
 # This egg is not an arlee egg float!
 
-flow transactions send ./cadence/transactions/EggFloat/registerEvent.cdc 62 "It is now." {}
+# flow transactions send ./cadence/transactions/EggFloat/registerEvent_template.cdc 66 
+flow transactions send ./cadence/transactions/EggFloat/registerEvent.cdc 66 '["firstCID","secondCID","thirdCID"]'   '[{"rarity":"legendary"},{"rarity":"rare"},{"rarity":"common"}]' "[1,2,3]"
+
 
 # Now can claim :)
-flow scripts execute ./cadence/scripts/float/get_float.cdc f8d6e0586b0a20c7 65
+./bash/adminSignedClaim.sh 69 emulator-user-account1
+./bash/adminSignedClaim.sh 72 emulator-user-account2
 
 # Check the arlees out
-flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc f8d6e0586b0a20c7
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0x179b6b1cb6755e31
+flow scripts execute ./cadence/scripts/ArleeScene/getUserArleeSceneNFTs.cdc 0xf3fcd2c1a78f5eee

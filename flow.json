@@ -59,6 +59,10 @@
 			"address": "179b6b1cb6755e31",
 			"keys": "c3c402f4b5ac76dd16b9d60de899c01e2d3c5ae153efdd2ca7fe91ad754abd73"
 		},
+    "emulator-user-account2": {
+			"address": "f3fcd2c1a78f5eee",
+			"keys": "c89af7e50eb5c927e66d040a93e02a7a6ffbcd950ab9d6fcbea235f9217b4836"
+		},
     "testnet-account": {
       "address": "e7fd8b1148e021b2",
       "key": {

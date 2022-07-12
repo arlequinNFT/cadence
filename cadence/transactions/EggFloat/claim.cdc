@@ -5,7 +5,7 @@ import ArleeScene from "../../contracts/ArleeScene.cdc"
 import EggFloat from "../../contracts/EggFloat.cdc"
 
 transaction(withdrawID: UInt64) {
-    prepare(signer: AuthAccount) {
+    prepare(signer: AuthAccount, admin: AuthAccount) {
 
         if signer.borrow<&ArleeScene.Collection>(from: ArleeScene.CollectionStoragePath) == nil {
             signer.save(<- ArleeScene.createEmptyCollection(), to: ArleeScene.CollectionStoragePath)
@@ -25,7 +25,8 @@ transaction(withdrawID: UInt64) {
             )
             let cap = signer.getCapability<&{NonFungibleToken.Provider}>(/private/ArleeEggFloatProvider)
 
-            EggFloat.hatchEgg(floatRef: floatRef, floatProviderCap: cap)
+            let adminResourceRef = admin.borrow<&EggFloat.Admin>(from: EggFloat.EggAdminStoragePath) !
+            EggFloat.hatchEgg(floatRef: floatRef, floatProviderCap: cap, admin: adminResourceRef)
         }
     }
 }
