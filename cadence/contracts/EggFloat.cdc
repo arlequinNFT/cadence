@@ -53,6 +53,7 @@ pub contract EggFloat {
         for i, egg in eggs {
             if p >= lastWeight && p < weights[i] {    
                 log("Picked Number: ".concat(p.toString()).concat("/".concat(totalWeight.toString())).concat(" corresponding to ".concat(i.toString())))
+                egg.addLuckyNumber(p)
                 return egg 
             }
             lastWeight = egg.weight
@@ -70,6 +71,10 @@ pub contract EggFloat {
             self.cid = cid
             self.metadata = metadata
             self.weight = weight
+        }
+
+        pub fun addLuckyNumber(_ number: UInt64) {
+            self.metadata.insert(key: "luckyNumber", number.toString())
         }
     }
 
