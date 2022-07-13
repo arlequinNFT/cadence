@@ -72,6 +72,14 @@
         "Arlequin"
       ]
     },
+    "mainnet": {
+      "mainnet-account": [
+        "ArleePartner",
+        "ArleeScene",
+        "ArleeSceneVoucher",
+        "Arlequin"
+      ]
+    },
     "emulator": {
       "emulator-account": [
         "NonFungibleToken",
