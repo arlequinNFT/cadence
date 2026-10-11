@@ -58,8 +58,7 @@
         "index": 0,
         "signatureAlgorithm": "ECDSA_secp256k1",
         "hashAlgorithm": "SHA3_256",
-        "privateKey": "b99bb6f174436c051042170b9e278a9d2e0d249a11f56d7b4b0bf78c276ba7de",
-        "publicKey": "7b58d38ffcc8503fc597e31bb298d90ca8fd8282aa21c49cb50e27457e1fda499e62e4830c98c4b36bcaceb835571aac54630f2a6fe1e3d820b758858882513c"
+        "privateKey": "$TESTNET_PRIVATE_KEY"
       }
     }
   },
